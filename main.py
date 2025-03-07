@@ -118,10 +118,8 @@ class MyApp(QWidget):
     def load_function(self):
         # Здесь разместите код для загрузки
 
-        file_path = self.file_button.text()
-
         try:
-            self.config.readExel(file_path)
+            self.config.readExel('conf.xlsx')
         except Exception:
             print("Ошибка загрузки conf!!!!!!!!")
             self.output_text.append("Ошибка загрузки conf!!!!!!!!")
