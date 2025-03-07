@@ -53,30 +53,21 @@ class Controller:
         return num
 
     def getNumTypeIO(self, group_typeio, type_io):
-        num_type = 0
 
-        if (group_typeio == "Di"):
-            num_type = DIGITAL_INPUT
-            return num_type
-        if (group_typeio == "Ai"):
-            num_type = RESISTANCE_INPUT
-            return num_type
-        if (group_typeio == "Do"):
-            num_type = DIGITAL_OUTPUT
-            return num_type
-        if (group_typeio == "Ao"):
-            num_type = VOLTAGE_OUTPUT
-            return num_type
-        return 0
+        types_key = {'Di': DIGITAL_INPUT, 'Ai': RESISTANCE_INPUT, 'Do': DIGITAL_OUTPUT, 'Ao': VOLTAGE_OUTPUT }
+        num_type = types_key[group_typeio]
+
+        return num_type
 
     def getNumMethodIO(self, var_eplan):
-        method = 0
         if f"{var_eplan}" in self.conf.Method:
             method = self.conf.Method[f"{var_eplan}"][0]
-        return method
+            return method
+        return None
 
     def getBinOutputDigit(self, io):
 
+        types_key = {'UO1': DEFAULT_BIN_OUTPUT_DIGIT | BIT_0, 'UO1': DEFAULT_BIN_OUTPUT_DIGIT | BIT_0, }
         new_bin_num = ''
         if (io == "UO1"):
             new_bin_num = DEFAULT_BIN_OUTPUT_DIGIT | BIT_0

@@ -32,7 +32,7 @@ class MyApp(QWidget):
         layout = QVBoxLayout()
 
         # Кнопка для выбора файла
-        self.file_button = QPushButton('Выбрать файл conf', self)
+        self.file_button = QPushButton('Выбрать файл eplan', self)
         self.file_button.clicked.connect(self.choose_file)
         layout.addWidget(self.file_button)
 
@@ -119,22 +119,32 @@ class MyApp(QWidget):
         # Здесь разместите код для загрузки
 
         file_path = self.file_button.text()
-        self.config.readExel(file_path)
-        self.config.printDictionary()
+
+        try:
+            self.config.readExel(file_path)
+        except Exception:
+            print("Ошибка загрузки conf!!!!!!!!")
+            self.output_text.append("Ошибка загрузки conf!!!!!!!!")
+        else:
+            self.config.printDictionary()
 
 
         self.output_text.append('Загрузка...')
         data = create_modbus_rtu_packet(slave_address=1, function='read', data_area='holding', starting_address=1, quantity_of_data=5)
         self.output_text.append(' '.join([hex(b)[2:].zfill(2).upper() for b in data]))
-
-    def unload_function(self):
-
         file_path_eplan = self.file_eplan_button.text()
-        self.dataFromEplan.readExel(file_path_eplan)
-        self.dataFromEplan.print()
+
+        try:
+            self.dataFromEplan.readExel(file_path_eplan)
+        except Exception:
+            print("Ошибка загрузки eplan файла!!!!!!")
+            self.output_text.append("Ошибка загрузки eplan файла!!!!!!")
+        else:
+            self.dataFromEplan.print()
 
         for i in range(1, self.dataFromEplan.name_var_length):
-            self.dataPLC.addData(self.controller.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i)))
+            self.dataPLC.addData(
+                self.controller.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i)))
 
         self.dataPLC.setBinDigital()
         self.dataPLC.print()
@@ -150,14 +160,20 @@ class MyApp(QWidget):
         print(baudrate_text)
         print(parity_combo_text)
 
-        self.driverModbus = DriverModbus(int(id_combo_text), port_text, int(baudrate_text), 8, parity_combo_text)
-        self.driverModbus.sendArrayDataToPLC(self.dataPLC.getData(), self.dataPLC.getLength())
-        self.driverModbus.writeLong(self.controller.getRegBinDigit(), self.dataPLC.getBinDigital())
+        try:
+            self.driverModbus = DriverModbus(int(id_combo_text), port_text, int(baudrate_text), 8, parity_combo_text)
+            self.driverModbus.sendArrayDataToPLC(self.dataPLC.getData(), self.dataPLC.getLength())
+            self.driverModbus.writeLong(self.controller.getRegBinDigit(), self.dataPLC.getBinDigital())
+        except Exception:
+            print("Ошибка Modbus!!!!")
+            self.output_text.append("Ошибка Modbus!!!!")
+        else:
+            print("finish")
+            self.output_text.append('Выгрузка...')
+    def unload_function(self):
 
-        print("finish")
-        # тут прочитать еплан
-        # если все гуд записать в контроллер используя настройки ком порта
-        self.output_text.append('Выгрузка...')
+       pass
+
 
     def clear_function(self):
         self.output_text.clear()
