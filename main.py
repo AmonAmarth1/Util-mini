@@ -32,14 +32,14 @@ class MyApp(QWidget):
         layout = QVBoxLayout()
 
         # Кнопка для выбора файла
-        self.file_button = QPushButton('Выбрать файл eplan', self)
-        self.file_button.clicked.connect(self.choose_file)
-        layout.addWidget(self.file_button)
+        self.file_button_specification = QPushButton('Выбрать файл eplan Спецификация', self)
+        self.file_button_specification.clicked.connect(self.choose_file_specification)
+        layout.addWidget(self.file_button_specification)
 
         # Кнопка для выбора файла eplan
-        self.file_eplan_button = QPushButton('Выбрать файл eplan', self)
-        self.file_eplan_button.clicked.connect(self.choose_file_eplan)
-        layout.addWidget(self.file_eplan_button)
+        self.file_button_scheme_plc = QPushButton('Выбрать файл eplan Схема ПЛК', self)
+        self.file_button_scheme_plc.clicked.connect(self.choose_file_scheme_plc)
+        layout.addWidget(self.file_button_scheme_plc)
 
         # Выпадающий список "порт"
         self.port_combo = QComboBox(self)
@@ -97,21 +97,21 @@ class MyApp(QWidget):
         # config = твой клас конфига
 
 
-    def choose_file(self):
+    def choose_file_specification(self):
         options = QFileDialog.Options()
         file_path, _ = QFileDialog.getOpenFileName(self, "Выберите файл", "", "All Files (*);;Text Files (*.txt)",
                                                    options=options)
         if file_path:
-            self.file_button.setText(file_path)  # Изменяем текст кнопки на путь к файлу
+            self.file_button_specification.setText(file_path)  # Изменяем текст кнопки на путь к файлу
             self.output_text.append(f'Выбранный файл: {file_path}')
             print('выбран файл')
 
-    def choose_file_eplan(self):
+    def choose_file_scheme_plc(self):
         options = QFileDialog.Options()
         file_path, _ = QFileDialog.getOpenFileName(self, "Выберите файл", "", "All Files (*);;Text Files (*.txt)",
                                                    options=options)
         if file_path:
-            self.file_eplan_button.setText(file_path)  # Изменяем текст кнопки на путь к файлу
+            self.file_button_scheme_plc.setText(file_path)  # Изменяем текст кнопки на путь к файлу
             self.output_text.append(f'Выбранный файл: {file_path}')
             print('выбран файл')
 
@@ -130,19 +130,31 @@ class MyApp(QWidget):
         self.output_text.append('Загрузка...')
         data = create_modbus_rtu_packet(slave_address=1, function='read', data_area='holding', starting_address=1, quantity_of_data=5)
         self.output_text.append(' '.join([hex(b)[2:].zfill(2).upper() for b in data]))
-        file_path_eplan = self.file_eplan_button.text()
+
+        file_path_scheme_plc = self.file_button_scheme_plc.text()
 
         try:
-            self.dataFromEplan.readExel(file_path_eplan)
+            self.dataFromEplan.readExel_scheme_plc(file_path_scheme_plc)
         except Exception:
-            print("Ошибка загрузки eplan файла!!!!!!")
-            self.output_text.append("Ошибка загрузки eplan файла!!!!!!")
+            print("Ошибка загрузки схемы плк!!!!!!")
+            self.output_text.append("Ошибка загрузки схемы плк!!!!!!")
         else:
             self.dataFromEplan.print()
 
-        for i in range(1, self.dataFromEplan.name_var_length):
-            self.dataPLC.addData(
-                self.controller.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i)))
+        file_path_specification = self.file_button_specification.text()
+
+        try:
+            self.dataFromEplan.readExel_specification(file_path_specification)
+        except Exception:
+            print("Ошибка загрузки спецификации!!!!!!")
+            self.output_text.append("Ошибка загрузки спецификации!!!!!!")
+        else:
+            self.dataFromEplan.print()
+
+
+        for i in range(0, self.dataFromEplan.file1_length):
+            self.dataPLC.addData(self.controller.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i)))
+
 
         self.dataPLC.setBinDigital()
         self.dataPLC.print()
@@ -187,7 +199,8 @@ class MyApp(QWidget):
     def save_config(self):
         """Сохраняет текущие настройки в файл конфигурации."""
         config = {
-            'file_path': self.file_button.text(),
+            'file_path_scheme_plc': self.file_button_scheme_plc.text(),
+            'file_path_specification': self.file_button_specification.text(),
             'port': self.port_combo.currentText(),
             'baudrate': self.baudrate_combo.currentText(),
             'parity': self.parity_combo.currentText(),
@@ -202,7 +215,8 @@ class MyApp(QWidget):
         if os.path.exists(CONFIG_FILE):
             with open(CONFIG_FILE, 'r') as f:
                 config = json.load(f)
-                self.file_button.setText(config.get('file_path', 'Выбрать файл'))
+                self.file_button_scheme_plc.setText(config.get('file_path_scheme_plc', 'Выбрать файл схемы плк'))
+                self.file_button_specification.setText(config.get('file_path_specification', 'Выбрать файл спецификации'))
                 self.port_combo.setCurrentText(config.get('port', ''))
                 self.baudrate_combo.setCurrentText(config.get('baudrate', '9600'))
                 self.parity_combo.setCurrentText(config.get('parity', 'None'))
