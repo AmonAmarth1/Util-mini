@@ -38,10 +38,18 @@ class ControllerIO:
 
         return num_type
 
-    def getNumMethodIO(self, var_eplan):
-        if f"{var_eplan}" in self.conf.Method:
-            method = self.conf.Method[f"{var_eplan}"][0]
-            return method
+    def getNumMethodIO(self, group_type_io, product_num_io):
+
+        if (group_type_io == "Ao" or group_type_io == "Do"):
+            return 1000
+        key_product = list(Literal.types_product_num.keys())
+        value_product = list(Literal.types_product_num.values())
+
+        if(product_num_io != None):
+            for i in range(0, len(key_product)):
+                if (product_num_io.find(key_product[i]) != -1):
+                    method = value_product[i]
+                    return method
         return None
 
     def getBinOutputDigit(self, io):
@@ -74,7 +82,7 @@ class ControllerIO:
                 self.regBinDigit = self.conf.RegUo[f"{name_io}"][Literal.POSITION_REG_BIN_DIGIT]
         return reg
 
-    def getValueAndReg(self, var_eplan, io):
+    def getValueAndReg(self, var_eplan, io, product_num_io):
         val_reg = (0, 0, 0, 0, 0, 0)
 
         var_plc = self.getNameVarPlC(var_eplan)
@@ -88,7 +96,7 @@ class ControllerIO:
         num_typeio = self.getNumTypeIO(group_typeio[0], 0)
         print(f"num_typeio: {num_typeio}")
 
-        num_method = self.getNumMethodIO(var_eplan)
+        num_method = self.getNumMethodIO(group_typeio[0], product_num_io)
         print(f"num_method: {num_method}")
 
         reg = self.getRegistr(group_typeio[0], io)

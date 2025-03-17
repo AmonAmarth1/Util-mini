@@ -157,7 +157,7 @@ class MyApp(QWidget):
         self.dataFromEplan.print_scheme_plc()
 
         for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
-            self.dataPLC.addData(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i)))
+            self.dataPLC.addData(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i), self.dataFromEplan.getProduct_number_IO(i)))
 
 
         self.dataPLC.setBinDigital()
