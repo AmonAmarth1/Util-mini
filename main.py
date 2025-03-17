@@ -14,7 +14,7 @@ CONFIG_FILE = 'config.json'
 
 from Config import Config
 from DataFromEplan import DataFromEplan
-from Controller import Controller
+from ControllerIO import ControllerIO
 
 from DataForPLC import DataPLC
 from DriverModbus import DriverModbus
@@ -90,7 +90,7 @@ class MyApp(QWidget):
 
         self.config = Config()
         self.dataFromEplan = DataFromEplan()
-        self.controller = Controller(self.config)
+        self.controllerIO = ControllerIO(self.config)
         self.dataPLC = DataPLC()
 
         # тут вызывать функцию конфиг
@@ -139,7 +139,7 @@ class MyApp(QWidget):
             print("Ошибка загрузки схемы плк!!!!!!")
             self.output_text.append("Ошибка загрузки схемы плк!!!!!!")
         else:
-            self.dataFromEplan.print()
+            self.dataFromEplan.print_scheme_plc()
 
         file_path_specification = self.file_button_specification.text()
 
@@ -149,11 +149,15 @@ class MyApp(QWidget):
             print("Ошибка загрузки спецификации!!!!!!")
             self.output_text.append("Ошибка загрузки спецификации!!!!!!")
         else:
-            self.dataFromEplan.print()
+            self.dataFromEplan.print_specification()
 
+        self.dataFromEplan.setProduct_Number_IO()
 
-        for i in range(0, self.dataFromEplan.file1_length):
-            self.dataPLC.addData(self.controller.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i)))
+        self.dataFromEplan.printProductNumberIO()
+        self.dataFromEplan.print_scheme_plc()
+
+        for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
+            self.dataPLC.addData(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i)))
 
 
         self.dataPLC.setBinDigital()
