@@ -34,7 +34,8 @@ class DriverModbus:
 
     def writeLong(self, reg, value):
         try:
-            self.client1.write_long(reg, value)
+            if (reg != None and value != None and reg != 0):
+                self.client1.write_long(reg, value)
         except Exception as e:
             print(f"Произошло исключение: {e}")
             raise
