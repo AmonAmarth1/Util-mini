@@ -38,8 +38,8 @@ class ControllerIO:
 
         return num_type
 
-    def getNumMethodIO(self, group_type_io, product_num_io, var_eplan, method):
-        if (method == 0):
+    def getNumMethodIO(self, group_type_io, product_num_io, var_eplan, use_specification):
+        if (use_specification == 0):
             if f"{var_eplan}" in self.conf.Method:
                 method = self.conf.Method[f"{var_eplan}"][0]
                 return method
