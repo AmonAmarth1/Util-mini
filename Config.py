@@ -24,10 +24,10 @@ class Config:
 
 
 
-    def readExel(self, name_file):# Не замечание лишь рекомендация:  имена методов / функции начинаются с маленькой буквы
+    def readExel(self, name_file_config):# Не замечание лишь рекомендация:  имена методов / функции начинаются с маленькой буквы
                        # https://peps.python.org/pep-0008/ или https://python.ivan-shamaev.ru/pep8-python-code-rules-programmers-guide/
 
-        wb = openpyxl.load_workbook(name_file) # плохое название файла)
+        wb = openpyxl.load_workbook(name_file_config) # плохое название файла)
 
 
         for item in self.__dict__.keys():

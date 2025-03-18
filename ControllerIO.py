@@ -26,7 +26,7 @@ class ControllerIO:
     def getNumVar(self, group_typeio, var_plc):
 
         num = 0
-        var_dict =  getattr(self.conf, group_typeio)
+        var_dict = getattr(self.conf, group_typeio)
 
         if f"{var_plc}" in var_dict:
             num = var_dict[f"{var_plc}"][0]
@@ -38,18 +38,22 @@ class ControllerIO:
 
         return num_type
 
-    def getNumMethodIO(self, group_type_io, product_num_io):
+    def getNumMethodIO(self, group_type_io, product_num_io, var_eplan, method):
+        if (method == 0):
+            if f"{var_eplan}" in self.conf.Method:
+                method = self.conf.Method[f"{var_eplan}"][0]
+                return method
+        else:
+            if (group_type_io == "Ao" or group_type_io == "Do"):
+                return 1000
+            key_product = list(Literal.types_product_num.keys())
+            value_product = list(Literal.types_product_num.values())
 
-        if (group_type_io == "Ao" or group_type_io == "Do"):
-            return 1000
-        key_product = list(Literal.types_product_num.keys())
-        value_product = list(Literal.types_product_num.values())
-
-        if(product_num_io != None):
-            for i in range(0, len(key_product)):
-                if (product_num_io.find(key_product[i]) != -1):
-                    method = value_product[i]
-                    return method
+            if(product_num_io != None):
+                for i in range(0, len(key_product)):
+                    if (product_num_io.find(key_product[i]) != -1):
+                        method = value_product[i]
+                        return method
         return None
 
     def getBinOutputDigit(self, io):
@@ -87,16 +91,19 @@ class ControllerIO:
 
         var_plc = self.getNameVarPlC(var_eplan)
         group_typeio = self.getGroupTypeio(var_eplan)
+
         print(f"group_typeio: {group_typeio}")
         print(f"var_plc: {var_plc}")
 
+        if (var_plc == ""):
+            return None
         num_var_plc = self.getNumVar(group_typeio[0], var_plc[0])
         print(f"num_var_plc: {num_var_plc}")
 
         num_typeio = self.getNumTypeIO(group_typeio[0], 0)
         print(f"num_typeio: {num_typeio}")
 
-        num_method = self.getNumMethodIO(group_typeio[0], product_num_io)
+        num_method = self.getNumMethodIO(group_typeio[0], product_num_io, var_eplan, 0)
         print(f"num_method: {num_method}")
 
         reg = self.getRegistr(group_typeio[0], io)

@@ -28,7 +28,7 @@ class DriverModbus:
 
     def writeMemoryModbus(self, num_reg, value):
 
-        if (num_reg != None):
+        if (num_reg != None and value != None and num_reg != 0):
             print(f"nume reg: {num_reg}, value: {value}")
             self.client1.write_register(num_reg, value, number_of_decimals=0, functioncode=6)
 
@@ -40,12 +40,13 @@ class DriverModbus:
             raise
 
     def sendCortage(self, data):
-        length = len(data)
+        if (data != None):
+            length = len(data)
 
-        for i in range(1, length):
-            if (i < 4):
-                self.writeMemoryModbus(data[length - 1][i - 1], data[i - 1])
-                sleep(0.005)
+            for i in range(1, length):
+                if (i < 4):
+                    self.writeMemoryModbus(data[length - 1][i - 1], data[i - 1])
+                    sleep(0.005)
 
     def sendArrayDataToPLC(self, data, length0):
         try:

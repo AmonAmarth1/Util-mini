@@ -15,6 +15,7 @@ CONFIG_FILE = 'config.json'
 from Config import Config
 from DataFromEplan import DataFromEplan
 from ControllerIO import ControllerIO
+from ControllerConverter import ControllerConverter
 
 from DataForPLC import DataPLC
 from DriverModbus import DriverModbus
@@ -91,6 +92,7 @@ class MyApp(QWidget):
         self.config = Config()
         self.dataFromEplan = DataFromEplan()
         self.controllerIO = ControllerIO(self.config)
+        self.controllerConverter = ControllerConverter()
         self.dataPLC = DataPLC()
 
         # тут вызывать функцию конфиг
@@ -155,6 +157,20 @@ class MyApp(QWidget):
 
         self.dataFromEplan.printProductNumberIO()
         self.dataFromEplan.print_scheme_plc()
+
+        print(self.dataFromEplan.getNameVarScheme())
+        print(self.dataFromEplan.getNameVarSpecification())
+
+        self.controllerConverter.setNameVarScheme(self.dataFromEplan.getNameVarScheme())
+        self.controllerConverter.setNameVarSpecification(self.dataFromEplan.getNameVarSpecification())
+
+        self.controllerConverter.countInputConverter()
+        self.controllerConverter.countOutputConverter()
+        self.controllerConverter.checkModbusUse()
+
+        print(f"Count input: {self.controllerConverter.getCountInputConverter()}")
+        print(f"Count output: {self.controllerConverter.getCountOutputConverter()}")
+        print(f"Modbus use: {self.controllerConverter.getModbusUse()}")
 
         for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
             self.dataPLC.addData(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i), self.dataFromEplan.getProduct_number_IO(i)))

@@ -32,6 +32,8 @@ class Literal:
     types_key_UO = {'UO1': NEW_BIN_NUM_1, 'UO2': NEW_BIN_NUM_2, 'UO3': NEW_BIN_NUM_3, 'UO4': NEW_BIN_NUM_4, 'UO5': NEW_BIN_NUM_5, 'UO6': NEW_BIN_NUM_6, 'UO7': NEW_BIN_NUM_7, 'UO8': NEW_BIN_NUM_8}
     types_key_io = {'Di': DIGITAL_INPUT, 'Ai': RESISTANCE_INPUT, 'Do': DIGITAL_OUTPUT, 'Ao': VOLTAGE_OUTPUT}
     types_product_num = {"NC": 1, "NO": 2, "3950": 7, "3435": 8}
+    types_converter = {"INVT": 0, "VCI": 2, "LCI": 3, "Danfoss": 4, "Canroon": 5}
+
 print(Literal.types_key_UO)
 print(Literal.types_key_io)
 print(Literal.types_key_UO['UO1'])
