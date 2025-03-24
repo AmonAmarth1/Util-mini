@@ -19,6 +19,7 @@ class ControllerConverter:
 
         self.data_for_modbus = ()
 
+
     def setNameVarScheme(self, name):
         self.name_var_scheme = name
 

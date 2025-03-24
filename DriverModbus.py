@@ -62,7 +62,7 @@ class DriverModbus:
         return 0
 
     def sendDataConverter(self, data):
-        print(data)
+        print("Send data for converter")
         for i in range(0, len(data)):
             try:
                 if (i < 2):
@@ -71,6 +71,16 @@ class DriverModbus:
                 else:
                     print(f"reg: {data[i][1]}, value {data[i][0]}")
                     self.client1.write_register(data[i][1], data[i][0])
+            except Exception as e:
+                print(f"Произошло исключение: {e}")
+                raise
+
+    def sendDataHeat(self, data):
+        print("Send data for heat")
+        for i in range(0, len(data)):
+            try:
+                print(f"reg: {data[i][1]}, value {data[i][0]}")
+                self.client1.write_bit((data[i][1]), data[i][0])
             except Exception as e:
                 print(f"Произошло исключение: {e}")
                 raise

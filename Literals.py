@@ -34,7 +34,7 @@ class Literal:
     types_product_num = {"NC": 1, "NO": 2, "3950": 7, "3435": 8}
     types_converter = {"INVT": 0, "VCI": 2, "LCI": 3, "Danfoss": 4, "Canroon": 5}
     register_converter = {"input_converter_modbus_use": 7, "output_converter_modbus_use": 8, "input_count": 51, "output_count": 60, "input_type": 53, "output_type": 52}
-
+    reg_heat = {"heat1_type": 22, "heat2_use": 17, "heat2_type": 16}
 print(Literal.types_key_UO)
 print(Literal.types_key_io)
 print(Literal.types_key_UO['UO1'])

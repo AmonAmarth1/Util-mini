@@ -16,6 +16,7 @@ from Config import Config
 from DataFromEplan import DataFromEplan
 from ControllerIO import ControllerIO
 from ControllerConverter import ControllerConverter
+from ControllerHeat import ControllerHeat
 
 from DataForPLC import DataPLC
 from DriverModbus import DriverModbus
@@ -93,6 +94,7 @@ class MyApp(QWidget):
         self.dataFromEplan = DataFromEplan()
         self.controllerIO = ControllerIO(self.config)
         self.controllerConverter = ControllerConverter()
+        self.controllerHeat = ControllerHeat()
         self.dataPLC = DataPLC()
 
         # тут вызывать функцию конфиг
@@ -177,6 +179,17 @@ class MyApp(QWidget):
         print(f"Type converter: {self.controllerConverter.getTypeCurrecntConverter()}")
         print(self.controllerConverter.data_for_modbus)
 
+        self.controllerHeat.setNameVarScheme(self.dataFromEplan.getNameVarScheme())
+
+        self.controllerHeat.setTypeHeat1()
+        self.controllerHeat.setHeat2()
+
+        print(f"heat1 type: {self.controllerHeat.heat1_type}")
+        print(f"heat2 use: {self.controllerHeat.heat2_use}")
+        print(f"heat2 type: {self.controllerHeat.heat2_type}")
+        print(f"heat 2 modbus: {self.controllerHeat.getDataForModbus()}")
+
+
         for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
             self.dataPLC.addData(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i), self.dataFromEplan.getProduct_number_IO(i)))
 
@@ -201,6 +214,7 @@ class MyApp(QWidget):
             self.driverModbus.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
 
             self.driverModbus.sendDataConverter(self.controllerConverter.getDataForModbus())
+            self.driverModbus.sendDataHeat(self.controllerHeat.getDataForModbus())
         except Exception:
             print("Ошибка Modbus!!!!")
             self.output_text.append("Ошибка Modbus!!!!")
