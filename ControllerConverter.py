@@ -10,10 +10,14 @@ class ControllerConverter:
         self.count_converter_output = 0
 
         self.modbus_use = 0
-        self.type_current_converter = 2
+        self.type_current_converter = 1
 
         self.list_type_converter_keys = list(Literal.types_converter.keys())
         self.list_type_converter_values = list(Literal.types_converter.values())
+
+        self.list_reg = list(Literal.register_converter.values())
+
+        self.data_for_modbus = ()
 
     def setNameVarScheme(self, name):
         self.name_var_scheme = name
@@ -48,6 +52,16 @@ class ControllerConverter:
             self.modbus_use = 1
         return self.modbus_use
 
+    def checkTypeConverter(self):
+        for i in range(0, len(self.product_number)):
+            for j in range(0, len(self.list_type_converter_keys)):
+                if (self.product_number[i].find(f"{self.list_type_converter_keys[j]}") != -1):
+                    self.type_current_converter = self.list_type_converter_values[j]
+                    return 0
+        return 0
+
+    def makeDataForModbus(self):
+        self.data_for_modbus = ((self.modbus_use, self.list_reg[0]), (self.modbus_use, self.list_reg[1]), (self.count_converter_input, self.list_reg[2]), (self.count_converter_output, self.list_reg[3]), (self.type_current_converter, self.list_reg[4]), (self.type_current_converter, self.list_reg[5]))
     def getCountInputConverter(self):
         return self.count_converter_input
 
@@ -56,3 +70,9 @@ class ControllerConverter:
 
     def getModbusUse(self):
         return self.modbus_use
+
+    def getTypeCurrecntConverter(self):
+        return self.type_current_converter
+
+    def getDataForModbus(self):
+        return self.data_for_modbus

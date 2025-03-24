@@ -40,7 +40,7 @@ class DriverModbus:
             print(f"Произошло исключение: {e}")
             raise
 
-    def sendCortage(self, data):
+    def sendCortageIO(self, data):
         if (data != None):
             length = len(data)
 
@@ -49,17 +49,31 @@ class DriverModbus:
                     self.writeMemoryModbus(data[length - 1][i - 1], data[i - 1])
                     sleep(0.005)
 
-    def sendArrayDataToPLC(self, data, length0):
+    def sendArrayDataToPLCIO(self, data, length0):
         try:
             length = length0
 
             for i in range(1, length + 1):
-                self.sendCortage(data[i - 1])
+                self.sendCortageIO(data[i - 1])
                 print(f"i: {i}")
         except Exception as e:
             print(f"Произошло исключение: {e}")
             raise
         return 0
+
+    def sendDataConverter(self, data):
+        print(data)
+        for i in range(0, len(data)):
+            try:
+                if (i < 2):
+                    print(f"reg: {data[i][1]}, value: {data[i][0]}")
+                    self.client1.write_bit(data[i][1], data[i][0])
+                else:
+                    print(f"reg: {data[i][1]}, value {data[i][0]}")
+                    self.client1.write_register(data[i][1], data[i][0])
+            except Exception as e:
+                print(f"Произошло исключение: {e}")
+                raise
 
     def setAdress(self, id):
         self.client1.address = id
@@ -69,3 +83,6 @@ class DriverModbus:
 
     def setParity(self, parity):
         self.client1.serial.parity = parity
+
+    def writeBit(self, register, bit):
+        self.client1.write_bit(register, bit)

@@ -163,14 +163,19 @@ class MyApp(QWidget):
 
         self.controllerConverter.setNameVarScheme(self.dataFromEplan.getNameVarScheme())
         self.controllerConverter.setNameVarSpecification(self.dataFromEplan.getNameVarSpecification())
+        self.controllerConverter.setProductName(self.dataFromEplan.getProductNumber())
 
         self.controllerConverter.countInputConverter()
         self.controllerConverter.countOutputConverter()
         self.controllerConverter.checkModbusUse()
+        self.controllerConverter.checkTypeConverter()
+        self.controllerConverter.makeDataForModbus()
 
         print(f"Count input: {self.controllerConverter.getCountInputConverter()}")
         print(f"Count output: {self.controllerConverter.getCountOutputConverter()}")
         print(f"Modbus use: {self.controllerConverter.getModbusUse()}")
+        print(f"Type converter: {self.controllerConverter.getTypeCurrecntConverter()}")
+        print(self.controllerConverter.data_for_modbus)
 
         for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
             self.dataPLC.addData(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i), self.dataFromEplan.getProduct_number_IO(i)))
@@ -192,8 +197,10 @@ class MyApp(QWidget):
 
         try:
             self.driverModbus = DriverModbus(int(id_combo_text), port_text, int(baudrate_text), 8, parity_combo_text)
-            self.driverModbus.sendArrayDataToPLC(self.dataPLC.getData(), self.dataPLC.getLength())
-            self.driverModbus.writeLong(self.controller.getRegBinDigit(), self.dataPLC.getBinDigital())
+            self.driverModbus.sendArrayDataToPLCIO(self.dataPLC.getData(), self.dataPLC.getLength())
+            self.driverModbus.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
+
+            self.driverModbus.sendDataConverter(self.controllerConverter.getDataForModbus())
         except Exception:
             print("Ошибка Modbus!!!!")
             self.output_text.append("Ошибка Modbus!!!!")
