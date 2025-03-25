@@ -85,6 +85,21 @@ class DriverModbus:
                 print(f"Произошло исключение: {e}")
                 raise
 
+    def sendDataRecup(self, data):
+        print("Send data for recup")
+        for i in range(0, len(data)):
+            try:
+                if (i < 1):
+                    print(f"reg: {data[i][1]}, value: {data[i][0]}")
+                    self.client1.write_bit(data[i][1], data[i][0])
+                else:
+                    print(f"reg: {data[i][1]}, value {data[i][0]}")
+                    self.client1.write_register(data[i][1], data[i][0])
+            except Exception as e:
+                print(f"Произошло исключение: {e}")
+                raise
+
+
     def setAdress(self, id):
         self.client1.address = id
 

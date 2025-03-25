@@ -17,6 +17,7 @@ from DataFromEplan import DataFromEplan
 from ControllerIO import ControllerIO
 from ControllerConverter import ControllerConverter
 from ControllerHeat import ControllerHeat
+from ControllerRecup import ControllerRecup
 
 from DataForPLC import DataPLC
 from DriverModbus import DriverModbus
@@ -95,6 +96,7 @@ class MyApp(QWidget):
         self.controllerIO = ControllerIO(self.config)
         self.controllerConverter = ControllerConverter()
         self.controllerHeat = ControllerHeat()
+        self.contollerRecup = ControllerRecup()
         self.dataPLC = DataPLC()
 
         # тут вызывать функцию конфиг
@@ -180,14 +182,19 @@ class MyApp(QWidget):
         print(self.controllerConverter.data_for_modbus)
 
         self.controllerHeat.setNameVarScheme(self.dataFromEplan.getNameVarScheme())
-
         self.controllerHeat.setTypeHeat1()
         self.controllerHeat.setHeat2()
 
         print(f"heat1 type: {self.controllerHeat.heat1_type}")
         print(f"heat2 use: {self.controllerHeat.heat2_use}")
         print(f"heat2 type: {self.controllerHeat.heat2_type}")
-        print(f"heat 2 modbus: {self.controllerHeat.getDataForModbus()}")
+        print(f"heat for modbus: {self.controllerHeat.getDataForModbus()}")
+
+        self.contollerRecup.setNameVarScheme(self.dataFromEplan.getNameVarScheme())
+        self.contollerRecup.setTypeRecup()
+
+        print(f"recup type: {self.contollerRecup.recup_type}")
+        print(f"recup data for modbus: {self.contollerRecup.getDataForModbus()}")
 
 
         for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):

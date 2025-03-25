@@ -31,13 +31,13 @@ class ControllerConverter:
 
     def countInputConverter(self):
         for i in range(0, len(self.name_var_specification)):
-            if (self.name_var_specification[i].find("1U") != -1):
+            if (self.name_var_specification[i].find(Literal.input_vent) != -1):
                 self.count_converter_input = self.count_converter_input + 1
         return self.count_converter_input
 
     def countOutputConverter(self):
         for i in range(0, len(self.name_var_specification)):
-            if (self.name_var_specification[i].find("2U") != -1):
+            if (self.name_var_specification[i].find(Literal.output_vent) != -1):
                 self.count_converter_output = self.count_converter_output + 1
         return self.count_converter_output
 
@@ -47,7 +47,7 @@ class ControllerConverter:
             return self.modbus_use
         else:
             for i in range(0, len(self.name_var_scheme)):
-                if(self.name_var_scheme[i].find("1U") != -1):
+                if(self.name_var_scheme[i].find(Literal.input_vent) != -1):
                     self.modbus_use = 0
                     return self.modbus_use
             self.modbus_use = 1
