@@ -102,6 +102,8 @@ class MyApp(QWidget):
         # тут вызывать функцию конфиг
         # config = твой клас конфига
 
+        self.data_base = {}
+
 
     def choose_file_specification(self):
         options = QFileDialog.Options()
@@ -165,36 +167,9 @@ class MyApp(QWidget):
         print(self.dataFromEplan.getNameVarScheme())
         print(self.dataFromEplan.getNameVarSpecification())
 
-        self.controllerConverter.setNameVarScheme(self.dataFromEplan.getNameVarScheme())
-        self.controllerConverter.setNameVarSpecification(self.dataFromEplan.getNameVarSpecification())
-        self.controllerConverter.setProductName(self.dataFromEplan.getProductNumber())
-
-        self.controllerConverter.countInputConverter()
-        self.controllerConverter.countOutputConverter()
-        self.controllerConverter.checkModbusUse()
-        self.controllerConverter.checkTypeConverter()
-        self.controllerConverter.makeDataForModbus()
-
-        print(f"Count input: {self.controllerConverter.getCountInputConverter()}")
-        print(f"Count output: {self.controllerConverter.getCountOutputConverter()}")
-        print(f"Modbus use: {self.controllerConverter.getModbusUse()}")
-        print(f"Type converter: {self.controllerConverter.getTypeCurrecntConverter()}")
-        print(self.controllerConverter.data_for_modbus)
-
-        self.controllerHeat.setNameVarScheme(self.dataFromEplan.getNameVarScheme())
-        self.controllerHeat.setTypeHeat1()
-        self.controllerHeat.setHeat2()
-
-        print(f"heat1 type: {self.controllerHeat.heat1_type}")
-        print(f"heat2 use: {self.controllerHeat.heat2_use}")
-        print(f"heat2 type: {self.controllerHeat.heat2_type}")
-        print(f"heat for modbus: {self.controllerHeat.getDataForModbus()}")
-
-        self.contollerRecup.setNameVarScheme(self.dataFromEplan.getNameVarScheme())
-        self.contollerRecup.setTypeRecup()
-
-        print(f"recup type: {self.contollerRecup.recup_type}")
-        print(f"recup data for modbus: {self.contollerRecup.getDataForModbus()}")
+        self.controllerConverter.makeDataModbus(self.dataFromEplan.getNameVarScheme(), self.dataFromEplan.getNameVarSpecification(), self.dataFromEplan.getProductNumber())
+        self.controllerHeat.makeDataModbus(self.dataFromEplan.getNameVarScheme())
+        self.contollerRecup.makeDataModbus(self.dataFromEplan.getNameVarScheme())
 
 
         for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
@@ -222,12 +197,23 @@ class MyApp(QWidget):
 
             self.driverModbus.sendDataConverter(self.controllerConverter.getDataForModbus())
             self.driverModbus.sendDataHeat(self.controllerHeat.getDataForModbus())
+
+
+            ##############################
+            print('---START------------------------------------------------------------------------------------------------------------------------')
+            self.driverModbus.sendDataRecup(self.contollerRecup.getDataForModbus())
+
+            print('---------------------------------------------------------------------------------------------------------------------------')
+
+            #################
         except Exception:
             print("Ошибка Modbus!!!!")
             self.output_text.append("Ошибка Modbus!!!!")
+            self.driverModbus.closePort()
         else:
             print("finish")
             self.output_text.append('Выгрузка...')
+            self.driverModbus.closePort()
     def unload_function(self):
 
        pass

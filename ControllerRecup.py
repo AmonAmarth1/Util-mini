@@ -2,16 +2,16 @@ from Literals import Literal
 
 class ControllerRecup:
     def __init__(self):
-        self.name_var_scheme = [""]
 
-        self.recup_use = 0
-        self.recup_type = 0
+        self.recup_use = False
+        self.recup_type = False
 
         self.recup_type_value = list(Literal.type_recup.values())
         self.reg_recup = list(Literal.reg_recup.values())
 
         self.data_for_modbus = ()
         pass
+
 
     def setNameVarScheme(self, var_scheme):
         self.name_var_scheme = var_scheme
@@ -27,3 +27,10 @@ class ControllerRecup:
     def getDataForModbus(self):
         self.data_for_modbus = ((self.recup_use, self.reg_recup[0]), (self.recup_type, self.reg_recup[1]))
         return self.data_for_modbus
+
+    def makeDataModbus(self, nameVarScheme):
+        self.setNameVarScheme(nameVarScheme)
+        self.setTypeRecup()
+
+        print(f"recup type: {self.recup_type}")
+        print(f"recup data for modbus: {self.getDataForModbus()}")

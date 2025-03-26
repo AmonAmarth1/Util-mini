@@ -21,6 +21,9 @@ class DriverModbus:
             print(f"Произошло исключение: {e}")
             raise
 
+    def closePort(self):
+        self.client1.serial.close()
+
     def readMemoryModbus(self, num_reg):
         kp = self.client1.read_register(num_reg)  # read single register 2bytes (16bit)
         print("Kp: ", kp)

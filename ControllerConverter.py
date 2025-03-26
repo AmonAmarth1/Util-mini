@@ -60,6 +60,22 @@ class ControllerConverter:
                     self.type_current_converter = self.list_type_converter_values[j]
                     return 0
         return 0
+    def makeDataModbus(self, nameVarScheme, NameVarSpecification, productNumber):
+        self.setNameVarScheme(nameVarScheme)
+        self.setNameVarSpecification(NameVarSpecification)
+        self.setProductName(productNumber)
+
+        self.countInputConverter()
+        self.countOutputConverter()
+        self.checkModbusUse()
+        self.checkTypeConverter()
+        self.makeDataForModbus()
+
+        print(f"Count input: {self.getCountInputConverter()}")
+        print(f"Count output: {self.getCountOutputConverter()}")
+        print(f"Modbus use: {self.getModbusUse()}")
+        print(f"Type converter: {self.getTypeCurrecntConverter()}")
+        print(self.data_for_modbus)
 
     def makeDataForModbus(self):
         self.data_for_modbus = ((self.modbus_use, self.list_reg[0]), (self.modbus_use, self.list_reg[1]), (self.count_converter_input, self.list_reg[2]), (self.count_converter_output, self.list_reg[3]), (self.type_current_converter, self.list_reg[4]), (self.type_current_converter, self.list_reg[5]))

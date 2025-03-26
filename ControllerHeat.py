@@ -39,3 +39,13 @@ class ControllerHeat:
     def getDataForModbus(self):
         self.data_for_modbus = ((self.heat1_type, self.reg_heat[0]), (self.heat2_use, self.reg_heat[1]), (self.heat2_type, self.reg_heat[2]))
         return self.data_for_modbus
+
+    def makeDataModbus(self, NameVarScheme):
+        self.setNameVarScheme(NameVarScheme)
+        self.setTypeHeat1()
+        self.setHeat2()
+
+        print(f"heat1 type: {self.heat1_type}")
+        print(f"heat2 use: {self.heat2_use}")
+        print(f"heat2 type: {self.heat2_type}")
+        print(f"heat for modbus: {self.getDataForModbus()}")
