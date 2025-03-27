@@ -19,6 +19,7 @@ class Literal:
     NUMBER_UNIVERSAL_OUTPUT = 8
 
     POSITION_REG_BIN_DIGIT = 3
+    reg_bin_digit = 303
 
     NEW_BIN_NUM_1 = DEFAULT_BIN_OUTPUT_DIGIT | BIT_0
     NEW_BIN_NUM_2 = DEFAULT_BIN_OUTPUT_DIGIT | BIT_1
@@ -36,14 +37,31 @@ class Literal:
     input_vent = "1U"
     output_vent = "2U"
     types_converter = {"INVT": 0, "VCI": 2, "LCI": 3, "Danfoss": 4, "Canroon": 5}
-    register_converter = {"input_converter_modbus_use": 7, "output_converter_modbus_use": 8, "input_count": 51, "output_count": 60, "input_type": 53, "output_type": 52}
+    register_converter = {"input_converter_modbus_use": 8, "output_converter_modbus_use": 7, "input_count": 51, "output_count": 60, "input_type": 53, "output_type": 52}
+    type_reg_converter = {"input_converter_modbus_use": 5, "output_converter_modbus_use": 5, "input_count": 6, "output_count": 6, "input_type": 6, "output_type": 6}
 
-    type_heat1 = {"electrical": "HE1", "humid": "Y1"}
+    '''
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    type_reg: 6 - WRITE SINGLE REGISTER, 5 - WRITE SINGLE COIL
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    '''
+
+    type_heat1 = {"electrical": "HE1", "liquid": "Y1"}
     type_heat2 = {"humid": "Y2"}
     reg_heat = {"heat1_type": 22, "heat2_use": 17, "heat2_type": 16}
+    type_reg_heat = {"heat1_type": 5, "heat2_use": 5, "heat2_type": 5}
 
     type_recup = {"plastina": "3Y1", "rotor": "9U1", "glikol": "Y5"}
     reg_recup = {"use_recup": 19, "type_recup": 1817}
+    type_reg_recup = {"use_recup": 5, "type_recup": 6}
+
+    type_dx = {"freon": "E1", "liquid": "Y3"}
+    reg_dx = {"use_dx": 24, "config_dx": 1627}
+    type_reg_dx = {"use_dx": 5, "config_dx": 6}
+
+    humidifier_type = {"humidifier": "TH1"}
+    reg_humidifier = {"humidifier_use": 11}
+    type_reg_humidifier = {"humidifier_use": 5}
 
 print(Literal.types_key_UO)
 print(Literal.types_key_io)

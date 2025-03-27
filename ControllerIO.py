@@ -117,9 +117,9 @@ class ControllerIO:
             bin_output_digit = self.getBinOutputDigit(io)
 
         if (group_typeio[0] == "Ai" or group_typeio[0] == "Di"):
-            val_reg = (num_var_plc, num_typeio, num_method, reg)
+            val_reg = ((num_var_plc, reg[0]), (num_typeio, reg[1]), (num_method, reg[2]))
         else:
-            val_reg = (num_var_plc, num_typeio, num_method, bin_output_digit, reg)
+            val_reg = ((num_var_plc, reg[0]), (num_typeio, reg[1]), (num_method, reg[2]), (bin_output_digit, reg[3]))
 
 
         return val_reg

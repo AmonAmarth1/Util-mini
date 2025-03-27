@@ -2,9 +2,9 @@ import serial
 import minimalmodbus
 
 from time import sleep
+
+from Literals import Literal
 class DriverModbus:
-
-
 
     def __init__(self, address=1, port='COM8', baudrate=115200, bytesize=8, parity=serial.PARITY_NONE, stopbits=1, timeout=0.1):
         try:
@@ -28,80 +28,44 @@ class DriverModbus:
         kp = self.client1.read_register(num_reg)  # read single register 2bytes (16bit)
         print("Kp: ", kp)
 
-
-    def writeMemoryModbus(self, num_reg, value):
-
-        if (num_reg != None and value != None and num_reg != 0):
-            print(f"nume reg: {num_reg}, value: {value}")
-            self.client1.write_register(num_reg, value, number_of_decimals=0, functioncode=6)
-
-    def writeLong(self, reg, value):
+    def writeSingleData(self, value, num_reg, type_reg = 6):
         try:
-            if (reg != None and value != None and reg != 0):
-                self.client1.write_long(reg, value)
+            if (num_reg != None and value != None and num_reg != 0):
+                if(type_reg == 5):
+                    print(f"nume reg: {num_reg}, value: {value}, type reg: 5;")
+                    self.client1.write_bit(num_reg, value)
+                if (type_reg == 6):
+                    print(f"nume reg: {num_reg}, value: {value}, type reg: 6;")
+                    self.client1.write_register(num_reg, value, number_of_decimals=0, functioncode=6)
         except Exception as e:
             print(f"Произошло исключение: {e}")
             raise
-
-    def sendCortageIO(self, data):
+    def sendCortage(self, data):
         if (data != None):
-            length = len(data)
-
-            for i in range(1, length):
-                if (i < 4):
-                    self.writeMemoryModbus(data[length - 1][i - 1], data[i - 1])
-                    sleep(0.005)
-
-    def sendArrayDataToPLCIO(self, data, length0):
+            for i in range(0, len(data)):
+                if(len(data[i]) == 3):
+                    self.writeSingleData(data[i][0], data[i][1], data[i][2])
+                if (len(data[i]) == 2 and data[i][1] != Literal.reg_bin_digit):
+                    self.writeSingleData(data[i][0], data[i][1])
+                sleep(0.005)
+    def sendArrayIO(self, data):
         try:
-            length = length0
-
-            for i in range(1, length + 1):
-                self.sendCortageIO(data[i - 1])
+            for i in range(0, len(data)):
                 print(f"i: {i}")
+                self.sendCortage(data[i])
         except Exception as e:
             print(f"Произошло исключение: {e}")
             raise
         return 0
 
-    def sendDataConverter(self, data):
-        print("Send data for converter")
-        for i in range(0, len(data)):
-            try:
-                if (i < 2):
-                    print(f"reg: {data[i][1]}, value: {data[i][0]}")
-                    self.client1.write_bit(data[i][1], data[i][0])
-                else:
-                    print(f"reg: {data[i][1]}, value {data[i][0]}")
-                    self.client1.write_register(data[i][1], data[i][0])
-            except Exception as e:
-                print(f"Произошло исключение: {e}")
-                raise
-
-    def sendDataHeat(self, data):
-        print("Send data for heat")
-        for i in range(0, len(data)):
-            try:
-                print(f"reg: {data[i][1]}, value {data[i][0]}")
-                self.client1.write_bit((data[i][1]), data[i][0])
-            except Exception as e:
-                print(f"Произошло исключение: {e}")
-                raise
-
-    def sendDataRecup(self, data):
-        print("Send data for recup")
-        for i in range(0, len(data)):
-            try:
-                if (i < 1):
-                    print(f"reg: {data[i][1]}, value: {data[i][0]}")
-                    self.client1.write_bit(data[i][1], data[i][0])
-                else:
-                    print(f"reg: {data[i][1]}, value {data[i][0]}")
-                    self.client1.write_register(data[i][1], data[i][0])
-            except Exception as e:
-                print(f"Произошло исключение: {e}")
-                raise
-
+    def writeLong(self, reg, value):
+        try:
+            if (reg != None and value != None and reg != 0):
+                print(f"reg: {reg}, value: {value}")
+                self.client1.write_long(reg, value)
+        except Exception as e:
+            print(f"Произошло исключение: {e}")
+            raise
 
     def setAdress(self, id):
         self.client1.address = id

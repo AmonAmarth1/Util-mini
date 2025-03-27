@@ -6,13 +6,14 @@ class ControllerHeat:
 
         self.heat1_type = 0
 
-        self.heat2_use = 0
+        self.heat2_use = False
         self.heat2_type = 0
 
         self.heat1_type_value = list(Literal.type_heat1.values())
         self.heat2_type_value = list(Literal.type_heat2.values())
 
         self.reg_heat = list(Literal.reg_heat.values())
+        self.type_reg_heat = list(Literal.type_reg_heat.values())
 
         self.data_for_modbus = ()
         pass
@@ -32,12 +33,12 @@ class ControllerHeat:
         print(self.heat2_type_value)
         for i in range(0, len(self.name_var_scheme)):
             if (self.name_var_scheme[i] == self.heat2_type_value[0]):
-                self.heat2_use = 1
+                self.heat2_use = True
                 self.heat2_type = 1
                 return 0
 
     def getDataForModbus(self):
-        self.data_for_modbus = ((self.heat1_type, self.reg_heat[0]), (self.heat2_use, self.reg_heat[1]), (self.heat2_type, self.reg_heat[2]))
+        self.data_for_modbus = ((self.heat1_type, self.reg_heat[0], self.type_reg_heat[0]), (self.heat2_use, self.reg_heat[1], self.type_reg_heat[1]), (self.heat2_type, self.reg_heat[2], self.type_reg_heat[2]))
         return self.data_for_modbus
 
     def makeDataModbus(self, NameVarScheme):

@@ -18,6 +18,8 @@ from ControllerIO import ControllerIO
 from ControllerConverter import ControllerConverter
 from ControllerHeat import ControllerHeat
 from ControllerRecup import ControllerRecup
+from ControllerDx import ControllerDx
+from ControllerHumidifer import ControllerHumidifier
 
 from DataForPLC import DataPLC
 from DriverModbus import DriverModbus
@@ -70,14 +72,18 @@ class MyApp(QWidget):
 
 
         # Кнопка "загрузить"
-        self.load_button = QPushButton('Загрузить', self)
+        self.load_button = QPushButton('Загрузить данные из eplan', self)
         self.load_button.clicked.connect(self.load_function)
         layout.addWidget(self.load_button)
 
         # Кнопка "выгрузить"
-        self.unload_button = QPushButton('Выгрузить', self)
+        self.unload_button = QPushButton('Сохранить данные в файл', self)
         self.unload_button.clicked.connect(self.unload_function)
         layout.addWidget(self.unload_button)
+
+        self.unload_button_plc = QPushButton('Выгрузить данные в плк', self)
+        self.unload_button_plc.clicked.connect(self.unload_function_plc)
+        layout.addWidget(self.unload_button_plc)
 
         # Поле для вывода информации
         self.output_text = QTextEdit(self)
@@ -97,6 +103,8 @@ class MyApp(QWidget):
         self.controllerConverter = ControllerConverter()
         self.controllerHeat = ControllerHeat()
         self.contollerRecup = ControllerRecup()
+        self.contollerDx = ControllerDx()
+        self.contollerHumidifier = ControllerHumidifier()
         self.dataPLC = DataPLC()
 
         # тут вызывать функцию конфиг
@@ -170,7 +178,8 @@ class MyApp(QWidget):
         self.controllerConverter.makeDataModbus(self.dataFromEplan.getNameVarScheme(), self.dataFromEplan.getNameVarSpecification(), self.dataFromEplan.getProductNumber())
         self.controllerHeat.makeDataModbus(self.dataFromEplan.getNameVarScheme())
         self.contollerRecup.makeDataModbus(self.dataFromEplan.getNameVarScheme())
-
+        self.contollerDx.makeDataModbus(self.dataFromEplan.getNameVarScheme())
+        self.contollerHumidifier.makeDataModbus(self.dataFromEplan.getNameVarScheme())
 
         for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
             self.dataPLC.addData(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i), self.dataFromEplan.getProduct_number_IO(i)))
@@ -178,6 +187,13 @@ class MyApp(QWidget):
 
         self.dataPLC.setBinDigital()
         self.dataPLC.print()
+
+
+    def unload_function(self):
+
+       pass
+
+    def unload_function_plc(self):
 
         port_text = self.port_combo.currentText()
         baudrate_text = self.baudrate_combo.currentText()
@@ -192,20 +208,15 @@ class MyApp(QWidget):
 
         try:
             self.driverModbus = DriverModbus(int(id_combo_text), port_text, int(baudrate_text), 8, parity_combo_text)
-            self.driverModbus.sendArrayDataToPLCIO(self.dataPLC.getData(), self.dataPLC.getLength())
+            self.driverModbus.sendArrayIO(self.dataPLC.getData())
             self.driverModbus.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
 
-            self.driverModbus.sendDataConverter(self.controllerConverter.getDataForModbus())
-            self.driverModbus.sendDataHeat(self.controllerHeat.getDataForModbus())
+            self.driverModbus.sendCortage(self.controllerConverter.getDataForModbus())
+            self.driverModbus.sendCortage(self.controllerHeat.getDataForModbus())
+            self.driverModbus.sendCortage(self.contollerRecup.getDataForModbus())
+            self.driverModbus.sendCortage(self.contollerDx.getDataForModbus())
+            self.driverModbus.sendCortage(self.contollerHumidifier.getDataForModbus())
 
-
-            ##############################
-            print('---START------------------------------------------------------------------------------------------------------------------------')
-            self.driverModbus.sendDataRecup(self.contollerRecup.getDataForModbus())
-
-            print('---------------------------------------------------------------------------------------------------------------------------')
-
-            #################
         except Exception:
             print("Ошибка Modbus!!!!")
             self.output_text.append("Ошибка Modbus!!!!")
@@ -214,10 +225,8 @@ class MyApp(QWidget):
             print("finish")
             self.output_text.append('Выгрузка...')
             self.driverModbus.closePort()
-    def unload_function(self):
 
-       pass
-
+        pass
 
     def clear_function(self):
         self.output_text.clear()
@@ -252,7 +261,7 @@ class MyApp(QWidget):
                 self.file_button_scheme_plc.setText(config.get('file_path_scheme_plc', 'Выбрать файл схемы плк'))
                 self.file_button_specification.setText(config.get('file_path_specification', 'Выбрать файл спецификации'))
                 self.port_combo.setCurrentText(config.get('port', ''))
-                self.baudrate_combo.setCurrentText(config.get('baudrate', '9600'))
+                self.baudrate_combo.setCurrentText(config.get('baudrate', '115200'))
                 self.parity_combo.setCurrentText(config.get('parity', 'None'))
                 self.id_combo.setCurrentText(config.get('id', 'ID1'))
 

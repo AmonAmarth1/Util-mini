@@ -1,6 +1,6 @@
 
 
-LENGTH_DATA_OUTPUT = 5
+LENGTH_DATA_OUTPUT = 4
 POSITION_BIN_DIGITAL_OUTPUT = 3
 class DataPLC:
 
@@ -22,7 +22,7 @@ class DataPLC:
         for i in range(1, self.length):
             if(self.data[i] != None):
                 if (len(self.data[i]) == LENGTH_DATA_OUTPUT):
-                    self.bin_digital = self.bin_digital | self.data[i][POSITION_BIN_DIGITAL_OUTPUT]
+                    self.bin_digital = self.bin_digital | self.data[i][POSITION_BIN_DIGITAL_OUTPUT][0]
 
 
     def getBinDigital(self):

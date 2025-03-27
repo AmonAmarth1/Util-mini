@@ -16,6 +16,7 @@ class ControllerConverter:
         self.list_type_converter_values = list(Literal.types_converter.values())
 
         self.list_reg = list(Literal.register_converter.values())
+        self.type_list_reg = list(Literal.type_reg_converter.values())
 
         self.data_for_modbus = ()
 
@@ -78,7 +79,7 @@ class ControllerConverter:
         print(self.data_for_modbus)
 
     def makeDataForModbus(self):
-        self.data_for_modbus = ((self.modbus_use, self.list_reg[0]), (self.modbus_use, self.list_reg[1]), (self.count_converter_input, self.list_reg[2]), (self.count_converter_output, self.list_reg[3]), (self.type_current_converter, self.list_reg[4]), (self.type_current_converter, self.list_reg[5]))
+        self.data_for_modbus = ((self.modbus_use, self.list_reg[0], self.type_list_reg[0]), (self.modbus_use, self.list_reg[1], self.type_list_reg[1]), (self.count_converter_input, self.list_reg[2], self.type_list_reg[2]), (self.count_converter_output, self.list_reg[3], self.type_list_reg[3]), (self.type_current_converter, self.list_reg[4], self.type_list_reg[4]), (self.type_current_converter, self.list_reg[5], self.type_list_reg[5]))
     def getCountInputConverter(self):
         return self.count_converter_input
 
