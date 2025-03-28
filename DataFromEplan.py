@@ -19,6 +19,17 @@ class DataFromEplan:
         self.name_var_specification.clear()
         self.product_number.clear()
 
+    def makeData(self):
+        self.print_specification()
+
+        self.setProduct_Number_IO()
+
+        print(self.product_number_io)
+        self.print_scheme_plc()
+
+        print(self.getNameVarScheme())
+        print(self.getNameVarSpecification())
+
     def setProduct_Number_IO(self):
         for i in range(0, self.file_length_scheme_plc):
             if f"{self.name_var_scheme[i]}" in self.name_var_specification:
@@ -68,9 +79,6 @@ class DataFromEplan:
         print(self.name_var_specification)
         print(self.product_number)
         print(f"length file specification: {self.file_length_specification}")
-
-    def printProductNumberIO(self):
-        print(self.product_number_io)
 
     def getVar(self, i):
         return self.name_var_scheme[i]

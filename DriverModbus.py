@@ -24,10 +24,6 @@ class DriverModbus:
     def closePort(self):
         self.client1.serial.close()
 
-    def readMemoryModbus(self, num_reg):
-        kp = self.client1.read_register(num_reg)  # read single register 2bytes (16bit)
-        print("Kp: ", kp)
-
     def writeSingleData(self, value, num_reg, type_reg = 6):
         try:
             if (num_reg != None and value != None and num_reg != 0):
@@ -67,14 +63,5 @@ class DriverModbus:
             print(f"Произошло исключение: {e}")
             raise
 
-    def setAdress(self, id):
-        self.client1.address = id
 
-    def setBaudRate(self, baud_rate):
-        self.client1.serial.baudrate = baud_rate
 
-    def setParity(self, parity):
-        self.client1.serial.parity = parity
-
-    def writeBit(self, register, bit):
-        self.client1.write_bit(register, bit)

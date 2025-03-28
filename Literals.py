@@ -38,13 +38,14 @@ class Literal:
     output_vent = "2U"
     types_converter = {"INVT": 0, "VCI": 2, "LCI": 3, "Danfoss": 4, "Canroon": 5}
     register_converter = {"input_converter_modbus_use": 8, "output_converter_modbus_use": 7, "input_count": 51, "output_count": 60, "input_type": 53, "output_type": 52}
-    type_reg_converter = {"input_converter_modbus_use": 5, "output_converter_modbus_use": 5, "input_count": 6, "output_count": 6, "input_type": 6, "output_type": 6}
 
     '''
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    type_reg: 6 - WRITE SINGLE REGISTER, 5 - WRITE SINGLE COIL
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+       type_reg: 6 - WRITE SINGLE REGISTER, 5 - WRITE SINGLE COIL
+       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     '''
+    type_reg_converter = {"input_converter_modbus_use": 5, "output_converter_modbus_use": 5, "input_count": 6, "output_count": 6, "input_type": 6, "output_type": 6}
+
 
     type_heat1 = {"electrical": "HE1", "liquid": "Y1"}
     type_heat2 = {"humid": "Y2"}
@@ -59,9 +60,15 @@ class Literal:
     reg_dx = {"use_dx": 24, "config_dx": 1627}
     type_reg_dx = {"use_dx": 5, "config_dx": 6}
 
-    humidifier_type = {"humidifier": "TH1"}
+    humidifier_type = {0: "TH1"}
     reg_humidifier = {"humidifier_use": 11}
     type_reg_humidifier = {"humidifier_use": 5}
+
+    mix_camera = {0: "4Y1"}
+    reg_mix_camera = {"mix_camera_use": 21}
+    type_reg_mix_camera = {"mix_camera_use": 5}
+
+
 
 print(Literal.types_key_UO)
 print(Literal.types_key_io)

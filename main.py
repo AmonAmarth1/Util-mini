@@ -20,6 +20,7 @@ from ControllerHeat import ControllerHeat
 from ControllerRecup import ControllerRecup
 from ControllerDx import ControllerDx
 from ControllerHumidifer import ControllerHumidifier
+from ControllerMixCamera import  ControllerMixCamera
 
 from DataForPLC import DataPLC
 from DriverModbus import DriverModbus
@@ -105,6 +106,7 @@ class MyApp(QWidget):
         self.contollerRecup = ControllerRecup()
         self.contollerDx = ControllerDx()
         self.contollerHumidifier = ControllerHumidifier()
+        self.controllerMixCamera = ControllerMixCamera()
         self.dataPLC = DataPLC()
 
         # тут вызывать функцию конфиг
@@ -165,25 +167,19 @@ class MyApp(QWidget):
             print("Ошибка загрузки спецификации!!!!!!")
             self.output_text.append("Ошибка загрузки спецификации!!!!!!")
         else:
-            self.dataFromEplan.print_specification()
-
-        self.dataFromEplan.setProduct_Number_IO()
-
-        self.dataFromEplan.printProductNumberIO()
-        self.dataFromEplan.print_scheme_plc()
-
-        print(self.dataFromEplan.getNameVarScheme())
-        print(self.dataFromEplan.getNameVarSpecification())
+            self.dataFromEplan.makeData()
 
         self.controllerConverter.makeDataModbus(self.dataFromEplan.getNameVarScheme(), self.dataFromEplan.getNameVarSpecification(), self.dataFromEplan.getProductNumber())
         self.controllerHeat.makeDataModbus(self.dataFromEplan.getNameVarScheme())
         self.contollerRecup.makeDataModbus(self.dataFromEplan.getNameVarScheme())
         self.contollerDx.makeDataModbus(self.dataFromEplan.getNameVarScheme())
         self.contollerHumidifier.makeDataModbus(self.dataFromEplan.getNameVarScheme())
+        self.controllerMixCamera.makeDataModbus(self.dataFromEplan.getNameVarScheme())
 
         for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
-            self.dataPLC.addData(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i), self.dataFromEplan.getProduct_number_IO(i)))
-
+            self.dataPLC.addDataIOModbus(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i), self.dataFromEplan.getProduct_number_IO(i)))
+            self.dataPLC.addDataVarIO(self.controllerIO.getNameVarPlC(self.dataFromEplan.getVar(i)))
+            self.dataPLC.addDataIO(self.dataFromEplan.getIO(i))
 
         self.dataPLC.setBinDigital()
         self.dataPLC.print()
@@ -195,27 +191,17 @@ class MyApp(QWidget):
 
     def unload_function_plc(self):
 
-        port_text = self.port_combo.currentText()
-        baudrate_text = self.baudrate_combo.currentText()
-        parity_combo_text = self.parity_combo.currentText()[:1]
-        id_combo_text = self.id_combo.currentText()
-        id_combo_text = id_combo_text.replace("Id ", "")
-
-        print(id_combo_text)
-        print(port_text)
-        print(baudrate_text)
-        print(parity_combo_text)
-
         try:
-            self.driverModbus = DriverModbus(int(id_combo_text), port_text, int(baudrate_text), 8, parity_combo_text)
+            self.driverModbus = DriverModbus(int(self.id_combo.currentText().replace("Id ", "")), self.port_combo.currentText(), int(self.baudrate_combo.currentText()), 8, self.parity_combo.currentText()[:1])
+
             self.driverModbus.sendArrayIO(self.dataPLC.getData())
             self.driverModbus.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
-
             self.driverModbus.sendCortage(self.controllerConverter.getDataForModbus())
             self.driverModbus.sendCortage(self.controllerHeat.getDataForModbus())
             self.driverModbus.sendCortage(self.contollerRecup.getDataForModbus())
             self.driverModbus.sendCortage(self.contollerDx.getDataForModbus())
             self.driverModbus.sendCortage(self.contollerHumidifier.getDataForModbus())
+            self.driverModbus.sendCortage(self.controllerMixCamera.getDataForModbus())
 
         except Exception:
             print("Ошибка Modbus!!!!")
