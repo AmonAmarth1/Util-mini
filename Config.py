@@ -4,9 +4,7 @@ import openpyxl
 # from openpyxl.styles import Color
 # from openpyxl.worksheet.print_settings import PrintTitles
 
-
 # Очень большой класс для такой малой задачи
-
 
 class Config:
 
@@ -21,14 +19,10 @@ class Config:
         self.typeio = dict()
         self.Method = dict()
 
-
-
-
     def readExel(self, name_file_config):# Не замечание лишь рекомендация:  имена методов / функции начинаются с маленькой буквы
                        # https://peps.python.org/pep-0008/ или https://python.ivan-shamaev.ru/pep8-python-code-rules-programmers-guide/
 
         wb = openpyxl.load_workbook(name_file_config) # плохое название файла)
-
 
         for item in self.__dict__.keys():
             dict_temp = dict()
@@ -40,9 +34,6 @@ class Config:
 
     def getAllConfig(self):
         return self
-
-
-
 
     def printDictionary(self):
         pass

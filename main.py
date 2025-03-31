@@ -151,6 +151,8 @@ class MyApp(QWidget):
 
         file_path_scheme_plc = self.file_button_scheme_plc.text()
 
+        self.dataFromEplan.clear()
+
         try:
             self.dataFromEplan.readExel_scheme_plc(file_path_scheme_plc)
         except Exception:
@@ -176,10 +178,15 @@ class MyApp(QWidget):
         self.contollerHumidifier.makeDataModbus(self.dataFromEplan.getNameVarScheme())
         self.controllerMixCamera.makeDataModbus(self.dataFromEplan.getNameVarScheme())
 
-        for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
-            self.dataPLC.addDataIOModbus(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i), self.dataFromEplan.getProduct_number_IO(i)))
-            self.dataPLC.addDataVarIO(self.controllerIO.getNameVarPlC(self.dataFromEplan.getVar(i)))
-            self.dataPLC.addDataIO(self.dataFromEplan.getIO(i))
+        self.dataPLC.clear()
+        try:
+            for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
+                self.dataPLC.addDataIOModbus(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i), self.dataFromEplan.getProduct_number_IO(i)))
+                self.dataPLC.addDataVarIO(self.controllerIO.getNameVarPlC(self.dataFromEplan.getVar(i)))
+                self.dataPLC.addDataIO(self.dataFromEplan.getIO(i))
+        except Exception:
+            print("Ошибка обработки данных!!!!!!")
+            self.output_text.append("Ошибка обработки данных!!!!!!")
 
         self.dataPLC.setBinDigital()
         self.dataPLC.print()

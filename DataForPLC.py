@@ -1,4 +1,5 @@
 
+from Literals import Literal
 
 LENGTH_DATA_OUTPUT = 4
 POSITION_BIN_DIGITAL_OUTPUT = 3
@@ -21,6 +22,13 @@ class DataPLC:
 
     def addDataIO(self, item):
         self.data_io.append(item)
+
+    def clear(self):
+        self.data_io_for_modbus.clear()
+        self.data_io_var.clear()
+        self.data_io.clear()
+        self.length = 0
+        self.bin_digital = Literal.DEFAULT_BIN_OUTPUT_DIGIT
 
     def print(self):
         print(self.data_io_for_modbus)
