@@ -63,7 +63,7 @@ class DataFromEplan:
         wb = openpyxl.load_workbook(file_path_specification)
         sheet_name = wb.sheetnames
         sheet = wb[sheet_name[0]]
-        for i in range(2, sheet.max_row):
+        for i in range(2, sheet.max_row + 1):
             name_var = sheet[f"C{i}"]
             product_number = sheet[f"E{i}"]
             if (name_var.value != None):
@@ -73,8 +73,8 @@ class DataFromEplan:
                     self.file_length_specification = self.file_length_specification + 1
                 else:
                     words = name_var.value.split()
-                    for i in range(0, len(words)):
-                        self.name_var_specification[words[i]] = self.file_length_specification
+                    for j in range(0, len(words)):
+                        self.name_var_specification[words[j]] = self.file_length_specification
                         self.product_number[self.file_length_specification] = product_number.value
                         self.file_length_specification = self.file_length_specification + 1
     def print_scheme_plc(self):

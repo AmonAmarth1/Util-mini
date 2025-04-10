@@ -33,6 +33,9 @@ class DriverModbus:
                 if (type_reg == 6):
                     print(f"nume reg: {num_reg}, value: {value}, type reg: 6;")
                     self.client1.write_register(num_reg, value, number_of_decimals=0, functioncode=6)
+                if (type_reg == 7):
+                    print(f"nume reg: {num_reg}, value: {value}, type reg: 7;")
+                    self.writeLong(num_reg, value)
         except Exception as e:
             print(f"Произошло исключение: {e}")
             raise

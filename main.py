@@ -20,7 +20,8 @@ from ControllerHeat import ControllerHeat
 from ControllerRecup import ControllerRecup
 from ControllerDx import ControllerDx
 from ControllerHumidifer import ControllerHumidifier
-from ControllerMixCamera import  ControllerMixCamera
+from ControllerMixCamera import ControllerMixCamera
+from ControllerModbusSensor import ControllerModbusSensor
 
 from DataForPLC import DataPLC
 from DriverModbus import DriverModbus
@@ -107,7 +108,9 @@ class MyApp(QWidget):
         self.contollerDx = ControllerDx()
         self.contollerHumidifier = ControllerHumidifier()
         self.controllerMixCamera = ControllerMixCamera()
+        self.contollerModbusSensors = ControllerModbusSensor()
         self.dataPLC = DataPLC()
+
 
         # тут вызывать функцию конфиг
         # config = твой клас конфига
@@ -178,6 +181,11 @@ class MyApp(QWidget):
         self.contollerHumidifier.makeDataModbus(self.dataFromEplan.getNameVarScheme())
         self.controllerMixCamera.makeDataModbus(self.dataFromEplan.getNameVarScheme())
 
+        self.contollerModbusSensors.setNameVarSchemeAndProductNumber(self.dataFromEplan.getNameVarSpecification(), self.dataFromEplan.getProductNumber())
+        self.contollerModbusSensors.setModbusSensors()
+        self.contollerModbusSensors.makeDataForModbus()
+
+
         self.dataPLC.clear()
         try:
             for i in range(0, self.dataFromEplan.getFileLengthSchemePlc()):
@@ -209,6 +217,8 @@ class MyApp(QWidget):
             self.driverModbus.sendCortage(self.contollerDx.getDataForModbus())
             self.driverModbus.sendCortage(self.contollerHumidifier.getDataForModbus())
             self.driverModbus.sendCortage(self.controllerMixCamera.getDataForModbus())
+            print(self.contollerModbusSensors.getDataForModbus())
+            self.driverModbus.sendArrayIO(self.contollerModbusSensors.getDataForModbus())
 
         except Exception:
             print("Ошибка Modbus!!!!")

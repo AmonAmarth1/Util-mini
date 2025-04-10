@@ -23,6 +23,7 @@ class ControllerRecup:
                 if (self.name_var_scheme[i] == self.recup_type_value[j]):
                     self.recup_use = True
                     self.recup_type = j + 1
+
                     return 0
 
     def getDataForModbus(self):
