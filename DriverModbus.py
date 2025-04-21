@@ -39,6 +39,7 @@ class DriverModbus:
         except Exception as e:
             print(f"Произошло исключение: {e}")
             raise
+
     def sendCortage(self, data):
         if (data != None):
             for i in range(0, len(data)):
@@ -47,6 +48,7 @@ class DriverModbus:
                 if (len(data[i]) == 2 and data[i][1] != Literal.reg_bin_digit):
                     self.writeSingleData(data[i][0], data[i][1])
                 sleep(0.005)
+
     def sendArrayIO(self, data):
         try:
             for i in range(0, len(data)):

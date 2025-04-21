@@ -47,8 +47,14 @@ class DataPLC:
     def getBinDigital(self):
         return self.bin_digital
 
-    def getData(self):
+    def getDataModbus(self):
         return self.data_io_for_modbus
+
+    def getDataIO(self):
+        return self.data_io
+
+    def getDataVar(self):
+        return self.data_io_var
 
     def getLength(self):
         return self.length

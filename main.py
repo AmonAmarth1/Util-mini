@@ -80,7 +80,7 @@ class MyApp(QWidget):
 
         # Кнопка "выгрузить"
         self.unload_button = QPushButton('Сохранить данные в файл', self)
-        self.unload_button.clicked.connect(self.unload_function)
+        self.unload_button.clicked.connect(self.unload_function_file)
         layout.addWidget(self.unload_button)
 
         self.unload_button_plc = QPushButton('Выгрузить данные в плк', self)
@@ -146,14 +146,12 @@ class MyApp(QWidget):
             self.output_text.append("Ошибка загрузки conf!!!!!!!!")
         else:
             self.config.printDictionary()
+            self.output_text.append('Загрузка conf...')
 
-
-        self.output_text.append('Загрузка...')
         data = create_modbus_rtu_packet(slave_address=1, function='read', data_area='holding', starting_address=1, quantity_of_data=5)
         self.output_text.append(' '.join([hex(b)[2:].zfill(2).upper() for b in data]))
 
         file_path_scheme_plc = self.file_button_scheme_plc.text()
-
         self.dataFromEplan.clear()
 
         try:
@@ -180,10 +178,7 @@ class MyApp(QWidget):
         self.contollerDx.makeDataModbus(self.dataFromEplan.getNameVarScheme())
         self.contollerHumidifier.makeDataModbus(self.dataFromEplan.getNameVarScheme())
         self.controllerMixCamera.makeDataModbus(self.dataFromEplan.getNameVarScheme())
-
-        self.contollerModbusSensors.setNameVarSchemeAndProductNumber(self.dataFromEplan.getNameVarSpecification(), self.dataFromEplan.getProductNumber())
-        self.contollerModbusSensors.setModbusSensors()
-        self.contollerModbusSensors.makeDataForModbus()
+        self.contollerModbusSensors.makeDataModbus(self.dataFromEplan.getNameVarSpecification(), self.dataFromEplan.getProductNumber())
 
 
         self.dataPLC.clear()
@@ -200,16 +195,17 @@ class MyApp(QWidget):
         self.dataPLC.print()
 
 
-    def unload_function(self):
-
-       pass
+    def unload_function_file(self):
+        self.output_text.append("Save data to file...")
+        print("Save data to file")
+        pass
 
     def unload_function_plc(self):
 
         try:
             self.driverModbus = DriverModbus(int(self.id_combo.currentText().replace("Id ", "")), self.port_combo.currentText(), int(self.baudrate_combo.currentText()), 8, self.parity_combo.currentText()[:1])
 
-            self.driverModbus.sendArrayIO(self.dataPLC.getData())
+            self.driverModbus.sendArrayIO(self.dataPLC.getDataModbus())
             self.driverModbus.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
             self.driverModbus.sendCortage(self.controllerConverter.getDataForModbus())
             self.driverModbus.sendCortage(self.controllerHeat.getDataForModbus())
@@ -217,7 +213,6 @@ class MyApp(QWidget):
             self.driverModbus.sendCortage(self.contollerDx.getDataForModbus())
             self.driverModbus.sendCortage(self.contollerHumidifier.getDataForModbus())
             self.driverModbus.sendCortage(self.controllerMixCamera.getDataForModbus())
-            print(self.contollerModbusSensors.getDataForModbus())
             self.driverModbus.sendArrayIO(self.contollerModbusSensors.getDataForModbus())
 
         except Exception:

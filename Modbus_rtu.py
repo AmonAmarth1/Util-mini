@@ -106,9 +106,6 @@ def create_modbus_rtu_packet(slave_address, function, data_area, starting_addres
         return None
 
 
-
-
-
 def calculate_crc16(data):
     """Вычисляет CRC16 для данных Modbus RTU."""
     crc = 0xFFFF

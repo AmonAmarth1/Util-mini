@@ -12,7 +12,7 @@ class ControllerModbusSensor:
         self.num_type_using_sensors = []
 
         self.sensor_name_key = list(Literal.sensor_name_num.keys())
-        self.sensor_name_num = Literal.sensor_name_num
+        self.sensor_var_num = Literal.sensor_name_num
 
         self.reg_sensor = list(Literal.reg_modbus_sensor.values())
         self.type_reg_sensor = list(Literal.type_reg_modbus_sensor.values())
@@ -42,18 +42,21 @@ class ControllerModbusSensor:
                                 pass
 
 
-    def makeDataForModbus(self):
+    def makeDataModbus(self, nameVarSpecification, productNumner):
+        self.setNameVarSchemeAndProductNumber(nameVarSpecification, productNumner)
+        self.setModbusSensors()
+
         count = 0
         for i in range(0, self.count_modbus_sensor):
             name = self.name_using_sensors[i]
             if (self.modbus_sensors_use == 1):
                 self.data_for_modbus.append(((self.modbus_sensors_use, self.reg_sensor[3], self.type_reg_sensor[3]), (self.modbus_sensors_use, self.reg_sensor[4], self.type_reg_sensor[4])))
-            if (len(self.sensor_name_num[name]) == 1):
-                self.data_for_modbus.append(((self.id_1, self.reg_sensor[0] + count, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][0], self.reg_sensor[1] + count, self.type_reg_sensor[1]), (self.sensor_name_num[name][0], self.reg_sensor[2] + count, self.type_reg_sensor[2])))
+            if (len(self.sensor_var_num[name]) == 1):
+                self.data_for_modbus.append(((self.id_1, self.reg_sensor[0] + count, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][0], self.reg_sensor[1] + count, self.type_reg_sensor[1]), (self.sensor_var_num[name][0], self.reg_sensor[2] + count, self.type_reg_sensor[2])))
                 count = count + 1
-            if (len(self.sensor_name_num[name]) == 2):
-                self.data_for_modbus.append(((self.id_1, self.reg_sensor[0] + count, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][0], self.reg_sensor[1] + count, self.type_reg_sensor[1]), (self.sensor_name_num[name][0], self.reg_sensor[2] + count, self.type_reg_sensor[2]),
-                                             (self.id_1, self.reg_sensor[0] + count + 1, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][1], self.reg_sensor[1] + count + 1, self.type_reg_sensor[1]), (self.sensor_name_num[name][1], self.reg_sensor[2] + count + 1, self.type_reg_sensor[2])))
+            if (len(self.sensor_var_num[name]) == 2):
+                self.data_for_modbus.append(((self.id_1, self.reg_sensor[0] + count, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][0], self.reg_sensor[1] + count, self.type_reg_sensor[1]), (self.sensor_var_num[name][0], self.reg_sensor[2] + count, self.type_reg_sensor[2]),
+                                             (self.id_1, self.reg_sensor[0] + count + 1, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][1], self.reg_sensor[1] + count + 1, self.type_reg_sensor[1]), (self.sensor_var_num[name][1], self.reg_sensor[2] + count + 1, self.type_reg_sensor[2])))
                 count = count + 2
             self.id_1 = self.id_1 + 1
 

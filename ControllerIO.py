@@ -1,4 +1,3 @@
-
 from Literals import Literal
 
 class ControllerIO:
@@ -7,7 +6,6 @@ class ControllerIO:
         self.regBinDigit = 0
 
     def getGroupTypeio(self, var_eplan):
-
         group_typeio = ""
         if f"{var_eplan}" in self.conf.typeio:
             group_typeio = self.conf.typeio[f"{var_eplan}"]
@@ -22,7 +20,6 @@ class ControllerIO:
         return var_plc
 
     def getNumVar(self, group_typeio, var_plc):
-
         num = 0
         var_dict = getattr(self.conf, group_typeio)
 
@@ -31,9 +28,7 @@ class ControllerIO:
         return num
 
     def getNumTypeIO(self, group_typeio, type_io):
-
         num_type = Literal.types_key_io[group_typeio]
-
         return num_type
 
     def getNumMethodIO(self, group_type_io, product_num_io, var_eplan, use_specification):
@@ -108,7 +103,6 @@ class ControllerIO:
         print(reg)
 
         use_universal_output = self.checkUseUniversalOutput(io)
-
         bin_output_digit = Literal.DEFAULT_BIN_OUTPUT_DIGIT
 
         if (group_typeio[0] == "Do" and use_universal_output == 1):
@@ -118,6 +112,5 @@ class ControllerIO:
             val_reg = ((num_var_plc, reg[0]), (num_typeio, reg[1]), (num_method, reg[2]))
         else:
             val_reg = ((num_var_plc, reg[0]), (num_typeio, reg[1]), (num_method, reg[2]), (bin_output_digit, reg[3]))
-
 
         return val_reg
