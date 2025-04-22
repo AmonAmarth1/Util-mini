@@ -1,7 +1,9 @@
 import openpyxl
+from openpyxl import Workbook
 
 class DataFileSave:
     def __init__(self):
+
         self.data_io_for_modbus = []
         self.data_io_var = []
         self.data_io = []
@@ -29,13 +31,14 @@ class DataFileSave:
         self.humidifier_data_for_modbus = ()
 
         self.mix_camera_use = False
-        self.data_for_modbus = ()
+        self.mix_camera_data_for_modbus = ()
 
         self.modbus_name_using_sensors = []
         self.modbus_name_type_sensors = []
-        self.modbus_num_type_using_sensors = []
+        self.modbus_var_sensors = []
+        self.modbus_data_for_sensors = []
 
-    def setIOData(self, io_modbus, io_var, io):
+    def setIOData(self, io, io_var, io_modbus):
         self.data_io_for_modbus = io_modbus
         self.data_io_var = io_var
         self.data_io = io
@@ -69,9 +72,111 @@ class DataFileSave:
 
     def setMixCameraData(self, mix_use, mix_data):
         self.mix_camera_use = mix_use
-        self.data_for_modbus = mix_data
+        self.mix_camera_data_for_modbus = mix_data
 
-    def setModbusSensorsData(self, name_sensor, type_sensor, num_type_sensor):
+    def setModbusSensorsData(self, name_sensor, type_sensor, var_sensors, data_for_modbus):
         self.modbus_name_using_sensors = name_sensor
         self.modbus_name_type_sensors = type_sensor
-        self.modbus_num_type_using_sensors = num_type_sensor
+        self.modbus_var_sensors = var_sensors
+        self.modbus_data_for_sensors = data_for_modbus
+
+    def createFile(self, file_path):
+        self.wb = openpyxl.load_workbook(file_path)
+        ws = self.wb.active
+        ws.title = "Данные для плк"
+
+        self.createDataIO(ws)
+        self.createDataConverter(ws)
+        self.createDataHeat(ws)
+        self.createDataRecup(ws)
+        self.createDataDx(ws)
+        self.createDataHumidifier(ws)
+        self.createDataMix(ws)
+        self.createDataSensor(ws)
+
+        self.wb.save(file_path)
+
+    def createDataIO(self, ws):
+
+        for i in range(0, len(self.data_io)):
+            ws[f"A{i + 1}"] = self.data_io[i]
+            ws[f"B{i + 1}"] = self.data_io_var[i][0]
+            str = self.tuples_to_string(self.data_io_for_modbus[i])
+            ws[f"C{i + 1}"] = str
+
+    def createDataConverter(self, ws):
+        ws['E1'] = "Количество ПЧ приток:"
+        ws['F1'] = self.converter_count_input
+
+        ws['E2'] = "Количество ПЧ вытяжка:"
+        ws['F2'] = self.converter_count_output
+
+        ws['E3'] = "Modbus используется:"
+        ws['F3'] = self.converter_modbus_use
+
+        ws['E4'] = "Тип ПЧ:"
+        ws['F4'] = self.converter_type_current
+
+        ws['E5'] = "Данные для modbus:"
+        ws['F5'] = self.tuples_to_string(self.converter_data_for_modbus)
+
+    def createDataHeat(self, ws):
+        ws['H1'] = "Тип 1 нагревателя:"
+        ws['I1'] = self.heat1_type
+
+        ws['H2'] = "Нагреватель 2 используется:"
+        ws['I2'] = self.heat2_use
+
+        ws['H3'] = "Тип 2 нагревателя:"
+        ws['I3'] = self.heat2_type
+
+        ws['H4'] = "Данные для modbus:"
+        ws['I4'] = self.tuples_to_string(self.heat_data_for_modbus)
+
+    def createDataRecup(self, ws):
+        ws['E7'] = "Рекуператор используется:"
+        ws['F7'] = self.recup_use
+
+        ws['E8'] = "Тип рекуператора:"
+        ws['F8'] = self.recup_type
+
+        ws['E9'] = "Данные для modbus:"
+        ws['F9'] = self.tuples_to_string(self.recup_data_for_modbus)
+
+    def createDataDx(self, ws):
+        ws['E11'] = "Охладитель используется:"
+        ws['F11'] = self.dx_use
+
+        ws['E12'] = "Тип охладителя:"
+        ws['F12'] = self.dx_type
+
+        ws['E13'] = "Данные для modbus:"
+        ws['F13'] = self.tuples_to_string(self.dx_data_for_modbus)
+
+    def createDataHumidifier(self, ws):
+        ws['E15'] = "Увлажнитель используется:"
+        ws['F15'] = self.humidifier_use
+
+        ws['E16'] = "Данные для modbus:"
+        ws['F16'] = self.tuples_to_string(self.humidifier_data_for_modbus)
+
+
+    def createDataMix(self, ws):
+        ws['E18'] = "Камера смешения используется:"
+        ws['F18'] = self.mix_camera_use
+
+        ws['E19'] = "Данные для modbus:"
+        ws['F19'] = self.tuples_to_string(self.mix_camera_data_for_modbus)
+
+    def createDataSensor(self, ws):
+        num = 0
+        for i in range(0, len(self.modbus_name_using_sensors)):
+            ws[f"E{21 + i}"] = self.modbus_name_using_sensors[i]
+            ws[f"F{21 + i}"] = self.modbus_name_type_sensors[i]
+            ws[f"G{21 + i}"] = self.modbus_var_sensors[i]
+            num = i + 1
+        ws[f"E{21 + num}"] = self.tuples_to_string(self.modbus_data_for_sensors)
+
+    def tuples_to_string(self, tuples_list, separator=', '):
+        # Преобразуем каждый кортеж в строку и объединяем их с помощью разделителя
+        return separator.join(str(tup) for tup in tuples_list)

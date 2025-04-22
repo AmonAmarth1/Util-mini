@@ -8,11 +8,13 @@ class ControllerModbusSensor:
         self.count_modbus_sensor = 0
         self.id_1 = 20
         self.name_using_sensors = []
+        self.name_var_using_sensors = []
         self.name_type_sensors = []
         self.num_type_using_sensors = []
 
         self.sensor_name_key = list(Literal.sensor_name_num.keys())
-        self.sensor_var_num = Literal.sensor_name_num
+        self.sensor_name_num = Literal.sensor_name_num
+        self.name_var_value = list(Literal.sensor_name_var.values())
 
         self.reg_sensor = list(Literal.reg_modbus_sensor.values())
         self.type_reg_sensor = list(Literal.type_reg_modbus_sensor.values())
@@ -34,6 +36,7 @@ class ControllerModbusSensor:
                     self.count_modbus_sensor = self.count_modbus_sensor + 1
                     self.modbus_sensors_use = 1
                     self.name_using_sensors.append(self.sensor_name_key[j])
+                    self.name_var_using_sensors.append(self.name_var_value[j])
                     for m in range(i, len(self.product_number)):
                         for k in range(0, len(self.sensor_type_key)):
                             if (self.product_number[m].find(f"{self.sensor_type_key[k]}") != -1):
@@ -51,12 +54,12 @@ class ControllerModbusSensor:
             name = self.name_using_sensors[i]
             if (self.modbus_sensors_use == 1):
                 self.data_for_modbus.append(((self.modbus_sensors_use, self.reg_sensor[3], self.type_reg_sensor[3]), (self.modbus_sensors_use, self.reg_sensor[4], self.type_reg_sensor[4])))
-            if (len(self.sensor_var_num[name]) == 1):
-                self.data_for_modbus.append(((self.id_1, self.reg_sensor[0] + count, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][0], self.reg_sensor[1] + count, self.type_reg_sensor[1]), (self.sensor_var_num[name][0], self.reg_sensor[2] + count, self.type_reg_sensor[2])))
+            if (len(self.sensor_name_num[name]) == 1):
+                self.data_for_modbus.append(((self.id_1, self.reg_sensor[0] + count, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][0], self.reg_sensor[1] + count, self.type_reg_sensor[1]), (self.sensor_name_num[name][0], self.reg_sensor[2] + count, self.type_reg_sensor[2])))
                 count = count + 1
-            if (len(self.sensor_var_num[name]) == 2):
-                self.data_for_modbus.append(((self.id_1, self.reg_sensor[0] + count, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][0], self.reg_sensor[1] + count, self.type_reg_sensor[1]), (self.sensor_var_num[name][0], self.reg_sensor[2] + count, self.type_reg_sensor[2]),
-                                             (self.id_1, self.reg_sensor[0] + count + 1, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][1], self.reg_sensor[1] + count + 1, self.type_reg_sensor[1]), (self.sensor_var_num[name][1], self.reg_sensor[2] + count + 1, self.type_reg_sensor[2])))
+            if (len(self.sensor_name_num[name]) == 2):
+                self.data_for_modbus.append(((self.id_1, self.reg_sensor[0] + count, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][0], self.reg_sensor[1] + count, self.type_reg_sensor[1]), (self.sensor_name_num[name][0], self.reg_sensor[2] + count, self.type_reg_sensor[2]),
+                                             (self.id_1, self.reg_sensor[0] + count + 1, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][1], self.reg_sensor[1] + count + 1, self.type_reg_sensor[1]), (self.sensor_name_num[name][1], self.reg_sensor[2] + count + 1, self.type_reg_sensor[2])))
                 count = count + 2
             self.id_1 = self.id_1 + 1
 

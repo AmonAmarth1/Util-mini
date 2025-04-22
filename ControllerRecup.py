@@ -5,8 +5,10 @@ class ControllerRecup:
 
         self.recup_use = False
         self.recup_type = 0
+        self.recup_type_name = ""
 
         self.recup_type_value = list(Literal.type_recup.values())
+        self.recup_type_key = list(Literal.type_recup.keys())
         self.reg_recup = list(Literal.reg_recup.values())
         self.type_reg_recup = list(Literal.type_reg_recup.values())
 
@@ -23,7 +25,7 @@ class ControllerRecup:
                 if (self.name_var_scheme[i] == self.recup_type_value[j]):
                     self.recup_use = True
                     self.recup_type = j + 1
-
+                    self.recup_type_name = self.recup_type_key[j]
                     return 0
 
     def getDataForModbus(self):

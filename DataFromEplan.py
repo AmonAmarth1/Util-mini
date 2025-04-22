@@ -26,6 +26,7 @@ class DataFromEplan:
         self.file_length_scheme_plc = 0
         self.name_var_specification.clear()
         self.product_number.clear()
+
     def makeData(self):
         self.print_specification()
 

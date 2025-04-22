@@ -5,8 +5,10 @@ class ControllerDx:
 
         self.dx_use = False
         self.dx_type = 0
+        self.dx_type_name = ""
 
         self.dx_type_value = list(Literal.type_dx.values())
+        self.dx_type_key = list(Literal.type_dx.keys())
         self.reg_dx = list(Literal.reg_dx.values())
         self.type_reg_dx = list(Literal.type_reg_dx.values())
 
@@ -22,6 +24,7 @@ class ControllerDx:
                 if (self.name_var_scheme[i] == self.dx_type_value[j]):
                     self.dx_use = True
                     self.dx_type = 1
+                    self.dx_type_name = "A"
                     return 0
 
     def getDataForModbus(self):

@@ -9,7 +9,7 @@ class ControllerConverter:
         self.count_converter_input = 0
         self.count_converter_output = 0
 
-        self.modbus_use = 0
+        self.modbus_use = False
         self.type_current_converter = 1
 
         self.list_type_converter_keys = list(Literal.types_converter.keys())
@@ -44,14 +44,14 @@ class ControllerConverter:
 
     def checkModbusUse(self):
         if(self.count_converter_input > 2 or self.count_converter_output > 2):
-            self.modbus_use = 1
+            self.modbus_use = True
             return self.modbus_use
         else:
             for i in range(0, len(self.name_var_scheme)):
                 if(self.name_var_scheme[i].find(Literal.input_vent) != -1):
-                    self.modbus_use = 0
+                    self.modbus_use = False
                     return self.modbus_use
-            self.modbus_use = 1
+            self.modbus_use = True
         return self.modbus_use
 
     def checkTypeConverter(self):
@@ -59,6 +59,7 @@ class ControllerConverter:
             for j in range(0, len(self.list_type_converter_keys)):
                 if (self.product_number[i].find(f"{self.list_type_converter_keys[j]}") != -1):
                     self.type_current_converter = self.list_type_converter_values[j]
+                    self.type_current_converter_name = self.list_type_converter_keys[j]
                     return 0
         return 0
     def makeDataModbus(self, nameVarScheme, NameVarSpecification, productNumber):

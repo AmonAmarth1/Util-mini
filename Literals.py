@@ -75,7 +75,7 @@ class Literal:
     N_T_OUT = 3
     N_H_OUT = 13
     sensor_name_num = {"TH1": (N_T_IN, N_H_IN), "TH2": (N_T_ROOM, N_H_ROOM), "TH3": (N_T_OUT, N_H_OUT)}
-
+    sensor_name_var = {"TH1": "температура приток, влажность приток", "TH2": "температура помещения, влажность помещения", "TH3": "температура вытяжки, влажность вытяжки"}
     sensor_type = {"LMF": 1, "ПЛВ-АМ": 2, "ДТВК-АМ": (3,4), "ДТВП-АМ": (3,4), "conel": (5,6), "LFH10R2": (7,8), "Oj PTH": 9, "DSC-G": 10, "ПДВ-2К": 11, "ПДВ-1К": 12}
     reg_modbus_sensor = {"id_sensor_1": 63, "type_sensor_1": 700, "type_var_sensor_1": 732, "modbus_sensors_use": 12, "sensors_use_bit": 189}
     type_reg_modbus_sensor = {"id_sensor_1": 6, "type_sensor_1": 6, "type_var_sensor_1": 6, "modbus_sensors_use": 5, "sensors_use_bit": 7}

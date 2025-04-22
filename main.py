@@ -23,6 +23,8 @@ from ControllerHumidifer import ControllerHumidifier
 from ControllerMixCamera import ControllerMixCamera
 from ControllerModbusSensor import ControllerModbusSensor
 
+from DataFileSave import DataFileSave
+
 from DataForPLC import DataPLC
 from DriverModbus import DriverModbus
 
@@ -111,7 +113,7 @@ class MyApp(QWidget):
         self.contollerModbusSensors = ControllerModbusSensor()
         self.dataPLC = DataPLC()
 
-
+        self.dataSaveFile = DataFileSave()
         # тут вызывать функцию конфиг
         # config = твой клас конфига
 
@@ -196,9 +198,27 @@ class MyApp(QWidget):
 
 
     def unload_function_file(self):
-        self.output_text.append("Save data to file...")
-        print("Save data to file")
-        pass
+        try:
+            options = QFileDialog.Options()
+            file_path, _ = QFileDialog.getOpenFileName(self, "Выберите файл", "", "All Files (*);;Text Files (*.txt)",
+                                                       options=options)
+            if file_path:
+                self.output_text.append(f'Выбранный файл для сохранения: {file_path}')
+                self.output_text.append(f"сохранение...")
+                self.dataSaveFile.setIOData(self.dataPLC.getDataIO(), self.dataPLC.getDataVar(), self.dataPLC.getDataModbus())
+                self.dataSaveFile.setConverterData(self.controllerConverter.getCountInputConverter(), self.controllerConverter.getCountOutputConverter(), self.controllerConverter.getModbusUse(), self.controllerConverter.type_current_converter_name, self.controllerConverter.getDataForModbus())
+                self.dataSaveFile.setHeatData(self.controllerHeat.heat1_type_name, self.controllerHeat.heat2_use, self.controllerHeat.heat2_type_name, self.controllerHeat.getDataForModbus())
+                self.dataSaveFile.setRecupData(self.contollerRecup.recup_use, self.contollerRecup.recup_type_name, self.contollerRecup.getDataForModbus())
+                self.dataSaveFile.setDxData(self.contollerDx.dx_use, self.contollerDx.dx_type_name, self.contollerDx.getDataForModbus())
+                self.dataSaveFile.setHumidifierData(self.contollerHumidifier.humidifier_use, self.contollerHumidifier.getDataForModbus())
+                self.dataSaveFile.setMixCameraData(self.controllerMixCamera.mix_camera_use, self.controllerMixCamera.getDataForModbus())
+                self.dataSaveFile.setModbusSensorsData(self.contollerModbusSensors.name_using_sensors, self.contollerModbusSensors.name_type_sensors, self.contollerModbusSensors.name_var_using_sensors, self.contollerModbusSensors.getDataForModbus())
+
+                self.dataSaveFile.createFile(file_path)
+                print('выбран файл сохранения')
+        except Exception as e:
+            self.output_text.append(f"Произошло исключение: {e}")
+            print(f"Произошло исключение: {e}")
 
     def unload_function_plc(self):
 
