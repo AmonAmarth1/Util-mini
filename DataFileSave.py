@@ -84,6 +84,7 @@ class DataFileSave:
         self.wb = openpyxl.load_workbook(file_path)
         ws = self.wb.active
         ws.title = "Данные для плк"
+        ws.delete_cols(0, ws.max_row)
 
         self.createDataIO(ws)
         self.createDataConverter(ws)
@@ -170,12 +171,13 @@ class DataFileSave:
 
     def createDataSensor(self, ws):
         num = 0
+        ws['E21'] = "Modbus датчики:"
         for i in range(0, len(self.modbus_name_using_sensors)):
-            ws[f"E{21 + i}"] = self.modbus_name_using_sensors[i]
-            ws[f"F{21 + i}"] = self.modbus_name_type_sensors[i]
-            ws[f"G{21 + i}"] = self.modbus_var_sensors[i]
+            ws[f"E{22 + i}"] = self.modbus_name_using_sensors[i]
+            ws[f"F{22 + i}"] = self.modbus_name_type_sensors[i]
+            ws[f"G{22 + i}"] = self.modbus_var_sensors[i]
             num = i + 1
-        ws[f"E{21 + num}"] = self.tuples_to_string(self.modbus_data_for_sensors)
+        ws[f"E{22 + num}"] = self.tuples_to_string(self.modbus_data_for_sensors)
 
     def tuples_to_string(self, tuples_list, separator=', '):
         # Преобразуем каждый кортеж в строку и объединяем их с помощью разделителя

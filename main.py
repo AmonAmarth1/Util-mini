@@ -26,7 +26,8 @@ from ControllerModbusSensor import ControllerModbusSensor
 from DataFileSave import DataFileSave
 
 from DataForPLC import DataPLC
-from DriverModbus import DriverModbus
+from DriverModbusWriteDataPLC import DriverModbusWriteDataPLC
+from DataFromPLC import DataFromPLC
 
 class MyApp(QWidget):
     def __init__(self):
@@ -76,9 +77,13 @@ class MyApp(QWidget):
 
 
         # Кнопка "загрузить"
-        self.load_button = QPushButton('Загрузить данные из eplan', self)
+        self.load_button = QPushButton('Загрузить данные из eplan и конфига', self)
         self.load_button.clicked.connect(self.load_function)
         layout.addWidget(self.load_button)
+
+        self.load_button_plc = QPushButton('Загрузить данные из PLC', self)
+        self.load_button_plc.clicked.connect(self.load_function_plc)
+        layout.addWidget(self.load_button_plc)
 
         # Кнопка "выгрузить"
         self.unload_button = QPushButton('Сохранить данные в файл', self)
@@ -151,7 +156,7 @@ class MyApp(QWidget):
             self.output_text.append('Загрузка conf...')
 
         data = create_modbus_rtu_packet(slave_address=1, function='read', data_area='holding', starting_address=1, quantity_of_data=5)
-        self.output_text.append(' '.join([hex(b)[2:].zfill(2).upper() for b in data]))
+        #self.output_text.append(' '.join([hex(b)[2:].zfill(2).upper() for b in data]))
 
         file_path_scheme_plc = self.file_button_scheme_plc.text()
         self.dataFromEplan.clear()
@@ -195,7 +200,20 @@ class MyApp(QWidget):
 
         self.dataPLC.setBinDigital()
         self.dataPLC.print()
+        self.output_text.append("Данные conf и excel загружены...")
 
+    def load_function_plc(self):
+        print("Загрузка данных из плк.")
+        try:
+            self.data_from_plc = DataFromPLC(self.config, int(self.id_combo.currentText().replace("Id ", "")), self.port_combo.currentText(), int(self.baudrate_combo.currentText()), 8, self.parity_combo.currentText()[:1])
+            self.data_from_plc.readAllData()
+        except Exception as e:
+            self.output_text.append(f"Произошло исключение: {e}")
+            print(f"Произошло исключение: {e}")
+        else:
+            self.data_from_plc.print()
+            self.output_text.append("Данные из плк загружены.")
+        pass
 
     def unload_function_file(self):
         try:
@@ -203,8 +221,8 @@ class MyApp(QWidget):
             file_path, _ = QFileDialog.getOpenFileName(self, "Выберите файл", "", "All Files (*);;Text Files (*.txt)",
                                                        options=options)
             if file_path:
+                print('выбран файл сохранения')
                 self.output_text.append(f'Выбранный файл для сохранения: {file_path}')
-                self.output_text.append(f"сохранение...")
                 self.dataSaveFile.setIOData(self.dataPLC.getDataIO(), self.dataPLC.getDataVar(), self.dataPLC.getDataModbus())
                 self.dataSaveFile.setConverterData(self.controllerConverter.getCountInputConverter(), self.controllerConverter.getCountOutputConverter(), self.controllerConverter.getModbusUse(), self.controllerConverter.type_current_converter_name, self.controllerConverter.getDataForModbus())
                 self.dataSaveFile.setHeatData(self.controllerHeat.heat1_type_name, self.controllerHeat.heat2_use, self.controllerHeat.heat2_type_name, self.controllerHeat.getDataForModbus())
@@ -215,7 +233,7 @@ class MyApp(QWidget):
                 self.dataSaveFile.setModbusSensorsData(self.contollerModbusSensors.name_using_sensors, self.contollerModbusSensors.name_type_sensors, self.contollerModbusSensors.name_var_using_sensors, self.contollerModbusSensors.getDataForModbus())
 
                 self.dataSaveFile.createFile(file_path)
-                print('выбран файл сохранения')
+                self.output_text.append(f"Сохранение выполнено успешно...")
         except Exception as e:
             self.output_text.append(f"Произошло исключение: {e}")
             print(f"Произошло исключение: {e}")
@@ -223,26 +241,26 @@ class MyApp(QWidget):
     def unload_function_plc(self):
 
         try:
-            self.driverModbus = DriverModbus(int(self.id_combo.currentText().replace("Id ", "")), self.port_combo.currentText(), int(self.baudrate_combo.currentText()), 8, self.parity_combo.currentText()[:1])
+            self.driverModbusWriter = DriverModbusWriteDataPLC(int(self.id_combo.currentText().replace("Id ", "")), self.port_combo.currentText(), int(self.baudrate_combo.currentText()), 8, self.parity_combo.currentText()[:1])
 
-            self.driverModbus.sendArrayIO(self.dataPLC.getDataModbus())
-            self.driverModbus.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
-            self.driverModbus.sendCortage(self.controllerConverter.getDataForModbus())
-            self.driverModbus.sendCortage(self.controllerHeat.getDataForModbus())
-            self.driverModbus.sendCortage(self.contollerRecup.getDataForModbus())
-            self.driverModbus.sendCortage(self.contollerDx.getDataForModbus())
-            self.driverModbus.sendCortage(self.contollerHumidifier.getDataForModbus())
-            self.driverModbus.sendCortage(self.controllerMixCamera.getDataForModbus())
-            self.driverModbus.sendArrayIO(self.contollerModbusSensors.getDataForModbus())
+            self.driverModbusWriter.sendArrayIO(self.dataPLC.getDataModbus())
+            self.driverModbusWriter.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
+            self.driverModbusWriter.sendCortage(self.controllerConverter.getDataForModbus())
+            self.driverModbusWriter.sendCortage(self.controllerHeat.getDataForModbus())
+            self.driverModbusWriter.sendCortage(self.contollerRecup.getDataForModbus())
+            self.driverModbusWriter.sendCortage(self.contollerDx.getDataForModbus())
+            self.driverModbusWriter.sendCortage(self.contollerHumidifier.getDataForModbus())
+            self.driverModbusWriter.sendCortage(self.controllerMixCamera.getDataForModbus())
+            self.driverModbusWriter.sendArrayIO(self.contollerModbusSensors.getDataForModbus())
 
         except Exception:
-            print("Ошибка Modbus!!!!")
-            self.output_text.append("Ошибка Modbus!!!!")
-            self.driverModbus.closePort()
+            print("Данные в плк не выгрузились, Ошибка Modbus!!!!")
+            self.output_text.append("Данные в плк не выгрузились, Ошибка Modbus!!!!")
+            self.driverModbusWriter.closePort()
         else:
             print("finish")
             self.output_text.append('Выгрузка...')
-            self.driverModbus.closePort()
+            self.driverModbusWriter.closePort()
 
         pass
 
