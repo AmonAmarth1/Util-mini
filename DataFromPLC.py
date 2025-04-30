@@ -14,10 +14,15 @@ class DataFromPLC:
         self.Do = config.Do
         self.Method = config.Method
 
+        self.data_io_var = []
+        self.data_io = []
+
         self.Ui_value = []
         self.Uo_value = []
         self.Q_value = []
         self.T_value = []
+        self.analog_dig_bit = 0
+        self.pwm_bit = 0
 
         self.converter_list_reg = list(Literal.register_converter.values())
         self.converter_type_list_reg = list(Literal.type_reg_converter.values())
@@ -45,9 +50,54 @@ class DataFromPLC:
 
         self.reg_sensor = list(Literal.reg_modbus_sensor.values())
         self.type_reg_sensor = list(Literal.type_reg_modbus_sensor.values())
+        self.sensor_type_single = list(Literal.sensor_type_single)
         self.sensors_data = []
 
         self.client = DriverModbusReadDataPLC(id, port, baud_rate, bytesize, parity)
+
+    def get_key(self, d, value):
+        for k, v in d.items():
+            if v[0] == value:
+                return k
+    def is_bit_set(self, number, bit_position):
+        # Проверяем, установлен ли бит по номеру bit_position
+        return (number & (1 << bit_position)) != 0
+
+    def makeSensorsData(self):
+        self.id_list = []
+        self.sensors_type_list = []
+        self.sensors_var_list = []
+        for i in range(0, len(self.sensors_data)):
+            if (self.sensors_data[i][0] == 0):
+                return 0
+            self.id_list.append(self.sensors_data[i][0])
+            self.sensors_type_list.append(self.sensors_data[i][1])
+            self.sensors_var_list.append(self.get_key(self.Ai, self.sensors_data[i][2]))
+
+    def makeIoAndVar(self):
+        for i in range(0, len(self.Ui_value)):
+            self.data_io.append(f"Ui{i+1}")
+            type_input = self.Ui_value[i][1]
+            if (type_input == 2):
+                self.data_io_var.append(self.get_key(self.Di, self.Ui_value[i][0]))
+            else:
+                self.data_io_var.append(self.get_key(self.Ai, self.Ui_value[i][0]))
+        for i in range(0, len(self.Uo_value)):
+            self.data_io.append(f"Uo{i+1}")
+            if (self.is_bit_set(self.analog_dig_bit, i)):
+                self.data_io_var.append(self.get_key(self.Do, self.Uo_value[i][0]))
+            else:
+                self.data_io_var.append(self.get_key(self.Ao, self.Uo_value[i][0]))
+        for i in range(0, len(self.Q_value)):
+            self.data_io.append(f"Q{i + 1}")
+            key = self.get_key(self.Do, self.Q_value[i][0])
+            if (key != None):
+                self.data_io_var.append(key)
+            else:
+                self.data_io_var.append('-')
+        for i in range(0, len(self.T_value)):
+            self.data_io.append(f"T{i + 1}")
+            self.data_io_var.append(self.get_key(self.Do, self.T_value[i][0]))
 
     def readAllData(self):
         self.readIO()
@@ -58,7 +108,11 @@ class DataFromPLC:
         self.readHumidifier()
         self.readMixCamera()
         self.readSensors()
+        self.makeIoAndVar()
+        self.makeSensorsData()
     def readIO(self):
+        reg_analog_digit = 0
+        reg_pwm = 0
         for i in range(0, len(self.RegUi)):
             reg = self.RegUi[f"UI{i + 1}"]
             if (reg != None):
@@ -67,6 +121,8 @@ class DataFromPLC:
             reg1 = self.RegUo[f"UO{i + 1}"]
             if (reg1 != None):
                 self.Uo_value.append(self.client.readCortageIO((reg1[0], reg1[1], reg1[2])))
+                reg_analog_digit = reg1[3]
+                reg_pwm = reg1[4]
         for i in range(0, 5):
             reg2 = self.RegUo[f"Q{i + 1}"]
             if (reg2 != None):
@@ -75,6 +131,9 @@ class DataFromPLC:
             reg3 = self.RegUo[f"T{i + 1}"]
             if (reg3 != None):
                 self.T_value.append(self.client.readCortageIO((reg3[0], reg3[1], reg3[2])))
+
+        self.analog_dig_bit = self.client.readSingleLong(reg_analog_digit)
+        self.pwm_bit = self.client.readSingleLong(reg_pwm)
 
     def readConverter(self):
         for i in range(0, len(self.converter_list_reg)):
@@ -134,3 +193,12 @@ class DataFromPLC:
         print("Данные c modbus датчиков:")
         for i in range(0, len(self.sensors_data)):
             print(self.sensors_data[i])
+
+        print("Данные по входам человеческие:")
+        print(self.data_io)
+        print(self.data_io_var)
+
+        print("Данные по modbus sensors:")
+        print(self.id_list)
+        print(self.sensors_type_list)
+        print(self.sensors_var_list)

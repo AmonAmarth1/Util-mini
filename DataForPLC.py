@@ -11,12 +11,15 @@ class DataPLC:
         self.data_io = []
         self.length = 0
         self.bin_digital = 0
-
+        self.bit_analog_access = 0
+        self.reg_bit_analog_access = Literal.reg_analog_var_access
 
     def addDataIOModbus(self, item):
         self.data_io_for_modbus.append(item)
         self.length = self.length + 1
 
+    def setAnalogBitAcess(self, bit_access):
+        self.bit_analog_access = bit_access
     def addDataVarIO(self, item):
         self.data_io_var.append(item)
 
@@ -36,6 +39,7 @@ class DataPLC:
         print(self.data_io)
         print(self.length)
         print(self.bin_digital)
+        print(self.bit_analog_access)
 
     def setBinDigital(self):
         for i in range(1, self.length):
@@ -46,6 +50,9 @@ class DataPLC:
 
     def getBinDigital(self):
         return self.bin_digital
+
+    def getBitAnalogAcess(self):
+        return self.bit_analog_access
 
     def getDataModbus(self):
         return self.data_io_for_modbus

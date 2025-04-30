@@ -22,6 +22,7 @@ class ControllerModbusSensor:
         self.sensor_type_key = list(Literal.sensor_type.keys())
         self.sensor_type_value = list(Literal.sensor_type.values())
 
+        self.analog_bit_access = 0
         self.data_for_modbus = []
         pass
 
@@ -57,10 +58,13 @@ class ControllerModbusSensor:
             if (len(self.sensor_name_num[name]) == 1):
                 self.data_for_modbus.append(((self.id_1, self.reg_sensor[0] + count, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][0], self.reg_sensor[1] + count, self.type_reg_sensor[1]), (self.sensor_name_num[name][0], self.reg_sensor[2] + count, self.type_reg_sensor[2])))
                 count = count + 1
+                self.analog_bit_access = self.analog_bit_access | pow(2, self.sensor_name_num[name][0])
             if (len(self.sensor_name_num[name]) == 2):
                 self.data_for_modbus.append(((self.id_1, self.reg_sensor[0] + count, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][0], self.reg_sensor[1] + count, self.type_reg_sensor[1]), (self.sensor_name_num[name][0], self.reg_sensor[2] + count, self.type_reg_sensor[2]),
                                              (self.id_1, self.reg_sensor[0] + count + 1, self.type_reg_sensor[0]), (self.num_type_using_sensors[i][1], self.reg_sensor[1] + count + 1, self.type_reg_sensor[1]), (self.sensor_name_num[name][1], self.reg_sensor[2] + count + 1, self.type_reg_sensor[2])))
                 count = count + 2
+                self.analog_bit_access = self.analog_bit_access | pow(2, self.sensor_name_num[name][0])
+                self.analog_bit_access = self.analog_bit_access | pow(2, self.sensor_name_num[name][1])
             self.id_1 = self.id_1 + 1
 
 

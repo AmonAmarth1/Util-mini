@@ -4,6 +4,7 @@ class ControllerIO:
     def __init__(self, config):
         self.conf = config
         self.regBinDigit = 0
+        self.analog_bit_access = 0
 
     def getGroupTypeio(self, var_eplan):
         group_typeio = ""
@@ -25,6 +26,8 @@ class ControllerIO:
 
         if f"{var_plc}" in var_dict:
             num = var_dict[f"{var_plc}"][0]
+        if (group_typeio == "Ai"):
+            self.analog_bit_access = self.analog_bit_access | pow(2, num)
         return num
 
     def getNumTypeIO(self, group_typeio, type_io):

@@ -85,6 +85,17 @@ class MyApp(QWidget):
         self.load_button_plc.clicked.connect(self.load_function_plc)
         layout.addWidget(self.load_button_plc)
 
+        self.qlabel_text = QLabel("Выбро источника для сохранения данных в файл: ")
+
+        # Выпадающий список "источник для сохранения данных"
+        self.sourse_data = QComboBox(self)
+        self.sourse_data.addItems(['Eplan', 'PLC'])
+
+        layout_Hbox1 = QHBoxLayout()
+        layout_Hbox1.addWidget(self.qlabel_text)
+        layout_Hbox1.addWidget(self.sourse_data)
+        layout.addLayout(layout_Hbox1)
+
         # Кнопка "выгрузить"
         self.unload_button = QPushButton('Сохранить данные в файл', self)
         self.unload_button.clicked.connect(self.unload_function_file)
@@ -117,6 +128,7 @@ class MyApp(QWidget):
         self.controllerMixCamera = ControllerMixCamera()
         self.contollerModbusSensors = ControllerModbusSensor()
         self.dataPLC = DataPLC()
+
 
         self.dataSaveFile = DataFileSave()
         # тут вызывать функцию конфиг
@@ -197,7 +209,7 @@ class MyApp(QWidget):
         except Exception:
             print("Ошибка обработки данных!!!!!!")
             self.output_text.append("Ошибка обработки данных!!!!!!")
-
+        self.dataPLC.setAnalogBitAcess(self.controllerIO.analog_bit_access | self.contollerModbusSensors.analog_bit_access)
         self.dataPLC.setBinDigital()
         self.dataPLC.print()
         self.output_text.append("Данные conf и excel загружены...")
@@ -223,17 +235,41 @@ class MyApp(QWidget):
             if file_path:
                 print('выбран файл сохранения')
                 self.output_text.append(f'Выбранный файл для сохранения: {file_path}')
-                self.dataSaveFile.setIOData(self.dataPLC.getDataIO(), self.dataPLC.getDataVar(), self.dataPLC.getDataModbus())
-                self.dataSaveFile.setConverterData(self.controllerConverter.getCountInputConverter(), self.controllerConverter.getCountOutputConverter(), self.controllerConverter.getModbusUse(), self.controllerConverter.type_current_converter_name, self.controllerConverter.getDataForModbus())
-                self.dataSaveFile.setHeatData(self.controllerHeat.heat1_type_name, self.controllerHeat.heat2_use, self.controllerHeat.heat2_type_name, self.controllerHeat.getDataForModbus())
-                self.dataSaveFile.setRecupData(self.contollerRecup.recup_use, self.contollerRecup.recup_type_name, self.contollerRecup.getDataForModbus())
-                self.dataSaveFile.setDxData(self.contollerDx.dx_use, self.contollerDx.dx_type_name, self.contollerDx.getDataForModbus())
-                self.dataSaveFile.setHumidifierData(self.contollerHumidifier.humidifier_use, self.contollerHumidifier.getDataForModbus())
-                self.dataSaveFile.setMixCameraData(self.controllerMixCamera.mix_camera_use, self.controllerMixCamera.getDataForModbus())
-                self.dataSaveFile.setModbusSensorsData(self.contollerModbusSensors.name_using_sensors, self.contollerModbusSensors.name_type_sensors, self.contollerModbusSensors.name_var_using_sensors, self.contollerModbusSensors.getDataForModbus())
 
-                self.dataSaveFile.createFile(file_path)
-                self.output_text.append(f"Сохранение выполнено успешно...")
+                sourse = self.sourse_data.currentText()
+
+                if (sourse == 'Eplan'):
+
+                    self.dataSaveFile.setIOData(self.dataPLC.getDataIO(), self.dataPLC.getDataVar(), self.dataPLC.getDataModbus())
+                    self.dataSaveFile.setConverterData(self.controllerConverter.getCountInputConverter(), self.controllerConverter.getCountOutputConverter(), self.controllerConverter.getModbusUse(), self.controllerConverter.type_current_converter_name, self.controllerConverter.getDataForModbus())
+                    self.dataSaveFile.setHeatData(self.controllerHeat.heat1_type_name, self.controllerHeat.heat2_use, self.controllerHeat.heat2_type_name, self.controllerHeat.getDataForModbus())
+                    self.dataSaveFile.setRecupData(self.contollerRecup.recup_use, self.contollerRecup.recup_type_name, self.contollerRecup.getDataForModbus())
+                    self.dataSaveFile.setDxData(self.contollerDx.dx_use, self.contollerDx.dx_type_name, self.contollerDx.getDataForModbus())
+                    self.dataSaveFile.setHumidifierData(self.contollerHumidifier.humidifier_use, self.contollerHumidifier.getDataForModbus())
+                    self.dataSaveFile.setMixCameraData(self.controllerMixCamera.mix_camera_use, self.controllerMixCamera.getDataForModbus())
+                    self.dataSaveFile.setModbusSensorsData(self.contollerModbusSensors.name_using_sensors, self.contollerModbusSensors.name_type_sensors, self.contollerModbusSensors.name_var_using_sensors, 'eplan', 0, self.contollerModbusSensors.getDataForModbus())
+                    self.dataSaveFile.createFile(file_path, 'eplan')
+                    self.output_text.append(f"Сохранение данных из eplan выполнено успешно...")
+
+                else:
+
+                    self.dataSaveFile.setIOData(self.data_from_plc.data_io, self.data_from_plc.data_io_var)
+                    self.dataSaveFile.setConverterData(self.data_from_plc.converter_data[2], self.data_from_plc.converter_data[3], self.data_from_plc.converter_data[0], self.data_from_plc.converter_data[4])
+                    self.dataSaveFile.setHeatData(self.data_from_plc.heat_data[0], self.data_from_plc.heat_data[1], self.data_from_plc.heat_data[2])
+                    self.dataSaveFile.setRecupData(self.data_from_plc.recup_data[0], self.data_from_plc.recup_data[1])
+                    self.dataSaveFile.setDxData(self.data_from_plc.dx_data[0], self.data_from_plc.dx_data[1])
+                    self.dataSaveFile.setHumidifierData(self.data_from_plc.humidifier_data[0])
+                    self.dataSaveFile.setMixCameraData(self.data_from_plc.mix_camera_data[0])
+                    self.dataSaveFile.setModbusSensorsData(self.data_from_plc.sensors_type_list,
+                                                           0,
+                                                           self.data_from_plc.sensors_var_list, 'plc',
+                                                            self.data_from_plc.id_list)
+
+                    self.dataSaveFile.createFile(file_path, 'plc')
+                    self.output_text.append(f"Сохранение данных из ПЛК выполнено успешно...")
+
+
+                    pass
         except Exception as e:
             self.output_text.append(f"Произошло исключение: {e}")
             print(f"Произошло исключение: {e}")
@@ -245,6 +281,7 @@ class MyApp(QWidget):
 
             self.driverModbusWriter.sendArrayIO(self.dataPLC.getDataModbus())
             self.driverModbusWriter.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
+            self.driverModbusWriter.writeLong(self.dataPLC.reg_bit_analog_access, self.dataPLC.getBitAnalogAcess())
             self.driverModbusWriter.sendCortage(self.controllerConverter.getDataForModbus())
             self.driverModbusWriter.sendCortage(self.controllerHeat.getDataForModbus())
             self.driverModbusWriter.sendCortage(self.contollerRecup.getDataForModbus())
