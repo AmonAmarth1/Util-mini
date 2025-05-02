@@ -32,12 +32,16 @@ class Literal:
 
     types_key_UO = {'UO1': NEW_BIN_NUM_1, 'UO2': NEW_BIN_NUM_2, 'UO3': NEW_BIN_NUM_3, 'UO4': NEW_BIN_NUM_4, 'UO5': NEW_BIN_NUM_5, 'UO6': NEW_BIN_NUM_6, 'UO7': NEW_BIN_NUM_7, 'UO8': NEW_BIN_NUM_8}
     types_key_io = {'Di': DIGITAL_INPUT, 'Ai': RESISTANCE_INPUT, 'Do': DIGITAL_OUTPUT, 'Ao': VOLTAGE_OUTPUT}
-    types_product_num = {"NC": 1, "NO": 2, "3950": 7, "3435": 8}
+    types_io_input = {0: "Voltage", 1: "Current", 2: "Digital", 3: "Resistance"}
+    types_io_output = {0: "0-10V", 1: "PWM", 2: "Digital"}
+    types_product_num = {"--": 0, "NC": 1, "NO": 2, "4-20мА": 3, "0-1": 4, "0-5": 5, "0-10": 6, "3950": 7, "3435": 8, "NTC20k": 9, "pt1000": 10}
+
     reg_analog_var_access = 256
 
     input_vent = "1U"
     output_vent = "2U"
-    types_converter = {"INVT": 0, "VCI": 2, "LCI": 3, "Danfoss": 4, "Canroon": 5}
+    types_converter = {"INVT": 0, "другой": 1, "VCI": 2, "LCI": 3, "Danfoss": 4, "Canroon": 5}
+    types_converter_num = {0: "INVT", 1: "другой", 2: "VCI", 3: "LCI", 4: "Danfoss", 5: "Canroon"}
     register_converter = {"input_converter_modbus_use": 8, "output_converter_modbus_use": 7, "input_count": 51, "output_count": 60, "input_type": 53, "output_type": 52}
 
     '''
@@ -49,15 +53,18 @@ class Literal:
 
 
     type_heat1 = {"electrical": "HE1", "liquid": "Y1"}
+    type_heat_num = {0: "electrical", 1: "liquid"}
     type_heat2 = {"humid": "Y2"}
     reg_heat = {"heat1_type": 22, "heat2_use": 17, "heat2_type": 16}
     type_reg_heat = {"heat1_type": 5, "heat2_use": 5, "heat2_type": 5}
 
     type_recup = {"plastina": "3Y1", "rotor": "9U1", "glikol": "Y5"}
+    type_recup_num = {0: "plastina", 1: "rotor", 2: "glikol"}
     reg_recup = {"use_recup": 19, "type_recup": 1817}
     type_reg_recup = {"use_recup": 5, "type_recup": 6}
 
     type_dx = {"freon": "E1", "liquid": "Y3"}
+    type_dx_num = {0: "-", 1: "A", 2: "AA"}
     reg_dx = {"use_dx": 24, "config_dx": 1627}
     type_reg_dx = {"use_dx": 5, "config_dx": 6}
 

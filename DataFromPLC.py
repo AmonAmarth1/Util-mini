@@ -71,7 +71,7 @@ class DataFromPLC:
             if (self.sensors_data[i][0] == 0):
                 return 0
             self.id_list.append(self.sensors_data[i][0])
-            self.sensors_type_list.append(self.sensors_data[i][1])
+            self.sensors_type_list.append(Literal.sensor_type_single[self.sensors_data[i][1]])
             self.sensors_var_list.append(self.get_key(self.Ai, self.sensors_data[i][2]))
 
     def makeIoAndVar(self):
@@ -138,18 +138,22 @@ class DataFromPLC:
     def readConverter(self):
         for i in range(0, len(self.converter_list_reg)):
             self.converter_data.append(self.client.readData(self.converter_list_reg[i], self.converter_type_list_reg[i]))
-
+        self.converter_type = Literal.types_converter_num[self.converter_data[4]]
     def readHeat(self):
         for i in range(0, len(self.reg_heat)):
             self.heat_data.append(self.client.readData(self.reg_heat[i], self.type_reg_heat[i]))
+        self.type_heat1 = Literal.type_heat_num[self.heat_data[0]]
+        self.type_heat2 = Literal.type_heat_num[self.heat_data[2]]
 
     def readRecup(self):
         for i in range(0, len(self.reg_recup)):
             self.recup_data.append(self.client.readData(self.reg_recup[i], self.type_reg_recup[i]))
+        self.recup_type = Literal.type_recup_num[self.converter_data[1]]
 
     def readDx(self):
         for i in range(0, len(self.reg_dx)):
             self.dx_data.append(self.client.readData(self.reg_dx[i], self.type_reg_dx[i]))
+        self.type_dx = Literal.type_dx_num[self.dx_data[1]]
     def readHumidifier(self):
         for i in range(0, len(self.reg_humidifier)):
             self.humidifier_data.append(self.client.readData(self.reg_humidifier[i], self.type_reg_humidifier[i]))
@@ -163,6 +167,8 @@ class DataFromPLC:
             sensor1 = []
             for j in range(0, len(self.reg_sensor) - 2):
                 sensor1.append(self.client.readData(self.reg_sensor[j] + i, self.type_reg_sensor[j]))
+            if (sensor1[0] == 0):
+                break
             self.sensors_data.append(sensor1)
 
     def print(self):

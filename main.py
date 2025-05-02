@@ -29,6 +29,8 @@ from DataForPLC import DataPLC
 from DriverModbusWriteDataPLC import DriverModbusWriteDataPLC
 from DataFromPLC import DataFromPLC
 
+from WindowConfig import WindowConfig
+
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -37,7 +39,7 @@ class MyApp(QWidget):
 
     def initUI(self):
         self.setWindowTitle('Util mini')
-        self.setGeometry(100, 100, 600, 600)
+        self.setGeometry(100, 100, 700, 800)
 
         layout = QVBoxLayout()
 
@@ -77,7 +79,7 @@ class MyApp(QWidget):
 
 
         # Кнопка "загрузить"
-        self.load_button = QPushButton('Загрузить данные из eplan и конфига', self)
+        self.load_button = QPushButton('Загрузить данные из eplan', self)
         self.load_button.clicked.connect(self.load_function)
         layout.addWidget(self.load_button)
 
@@ -115,6 +117,10 @@ class MyApp(QWidget):
         self.clear_button.clicked.connect(self.clear_function)
         layout.addWidget(self.clear_button)
 
+        self.config_window = QPushButton('Открыть окно конфигурации', self)
+        self.config_window.clicked.connect(self.open_config_window)
+        layout.addWidget(self.config_window)
+
         self.setLayout(layout)
 
         self.config = Config()
@@ -136,6 +142,14 @@ class MyApp(QWidget):
 
         self.data_base = {}
 
+        try:
+            self.config.readExel('conf.xlsx')
+        except Exception:
+            print("Ошибка загрузки conf!!!!!!!!")
+            self.output_text.append("Ошибка загрузки conf!!!!!!!!")
+        else:
+            self.config.printDictionary()
+            self.output_text.append('Conf загружен.')
 
     def choose_file_specification(self):
         options = QFileDialog.Options()
@@ -157,15 +171,6 @@ class MyApp(QWidget):
 
     def load_function(self):
         # Здесь разместите код для загрузки
-
-        try:
-            self.config.readExel('conf.xlsx')
-        except Exception:
-            print("Ошибка загрузки conf!!!!!!!!")
-            self.output_text.append("Ошибка загрузки conf!!!!!!!!")
-        else:
-            self.config.printDictionary()
-            self.output_text.append('Загрузка conf...')
 
         data = create_modbus_rtu_packet(slave_address=1, function='read', data_area='holding', starting_address=1, quantity_of_data=5)
         #self.output_text.append(' '.join([hex(b)[2:].zfill(2).upper() for b in data]))
@@ -254,10 +259,10 @@ class MyApp(QWidget):
                 else:
 
                     self.dataSaveFile.setIOData(self.data_from_plc.data_io, self.data_from_plc.data_io_var)
-                    self.dataSaveFile.setConverterData(self.data_from_plc.converter_data[2], self.data_from_plc.converter_data[3], self.data_from_plc.converter_data[0], self.data_from_plc.converter_data[4])
-                    self.dataSaveFile.setHeatData(self.data_from_plc.heat_data[0], self.data_from_plc.heat_data[1], self.data_from_plc.heat_data[2])
-                    self.dataSaveFile.setRecupData(self.data_from_plc.recup_data[0], self.data_from_plc.recup_data[1])
-                    self.dataSaveFile.setDxData(self.data_from_plc.dx_data[0], self.data_from_plc.dx_data[1])
+                    self.dataSaveFile.setConverterData(self.data_from_plc.converter_data[2], self.data_from_plc.converter_data[3], self.data_from_plc.converter_data[0], self.data_from_plc.converter_type)
+                    self.dataSaveFile.setHeatData(self.data_from_plc.type_heat1, self.data_from_plc.heat_data[1], self.data_from_plc.type_heat2)
+                    self.dataSaveFile.setRecupData(self.data_from_plc.recup_data[0], self.data_from_plc.recup_type)
+                    self.dataSaveFile.setDxData(self.data_from_plc.dx_data[0], self.data_from_plc.type_dx)
                     self.dataSaveFile.setHumidifierData(self.data_from_plc.humidifier_data[0])
                     self.dataSaveFile.setMixCameraData(self.data_from_plc.mix_camera_data[0])
                     self.dataSaveFile.setModbusSensorsData(self.data_from_plc.sensors_type_list,
@@ -300,6 +305,10 @@ class MyApp(QWidget):
             self.driverModbusWriter.closePort()
 
         pass
+
+    def open_config_window(self):
+        self.window_config = WindowConfig(self.config)
+        self.window_config.show()
 
     def clear_function(self):
         self.output_text.clear()

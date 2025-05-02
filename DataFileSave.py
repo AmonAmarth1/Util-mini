@@ -10,7 +10,7 @@ class DataFileSave:
 
         self.converter_count_input = 0
         self.converter_count_output = 0
-        self.converter_modbus_use = 0
+        self.converter_modbus_use = False
         self.converter_type_current = 1
         self.converter_data_for_modbus = ()
 
@@ -46,7 +46,7 @@ class DataFileSave:
     def setConverterData(self, count_input, count_output, modbus_use, type_current, data_modbus=0):
         self.converter_count_input = count_input
         self.converter_count_output = count_output
-        self.converter_modbus_use = modbus_use
+        self.converter_modbus_use = bool(modbus_use)
         self.converter_type_current = type_current
         self.converter_data_for_modbus = data_modbus
 
@@ -198,6 +198,8 @@ class DataFileSave:
 
         if (sourse == 'plc'):
             ws['E22'] = "id modbus датчика:"
+            ws['F22'] = "Тип modbus датчика:"
+            ws['G22'] = "Переменная датчика:"
             for i in range(0, len(self.id_sensors_list)):
                 ws[f"E{23 + i}"] = self.id_sensors_list[i]
                 ws[f"F{23 + i}"] = self.modbus_name_type_sensors[i]
