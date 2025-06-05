@@ -5,6 +5,8 @@ from DriverModbusReadDataPLC import DriverModbusReadDataPLC
 class DataFromPLC:
 
     def __init__(self, config, id, port, baud_rate, bytesize, parity):
+
+
         self.RegUi = config.RegUi
         self.RegUo = config.RegUo
 
@@ -14,8 +16,19 @@ class DataFromPLC:
         self.Do = config.Do
         self.Method = config.Method
 
-        self.data_io_var = []
         self.data_io = []
+        self.data_io_var = []
+        self.data_io_type = []
+        self.data_io_product = []
+        self.data_io_min = []
+        self.data_io_min_human = []
+        self.data_io_max = []
+
+        self.data_io_var_human = []
+        self.data_io_type_human = []
+        self.data_io_product_human = []
+
+        self.io_product_key = list(Literal.types_product_num.keys())
 
         self.Ui_value = []
         self.Uo_value = []
@@ -63,6 +76,25 @@ class DataFromPLC:
         # Проверяем, установлен ли бит по номеру bit_position
         return (number & (1 << bit_position)) != 0
 
+    def binary_to_negative_decimal(self, binary_str):
+        # Проверяем, что строка состоит только из 0 и 1
+        if not all(bit in '01' for bit in binary_str):
+            raise ValueError("Input must be a binary string.")
+
+        # Определяем количество битов
+        n = len(binary_str)
+
+        # Если старший бит равен 1, то это отрицательное число
+        if binary_str[0] == '1':
+            # Вычисляем отрицательное значение
+            # Инвертируем биты и добавляем 1 для получения положительного значения
+            inverted_bits = ''.join('1' if bit == '0' else '0' for bit in binary_str)
+            positive_value = int(inverted_bits, 2) + 1
+            return -positive_value
+        else:
+            # Если старший бит равен 0, просто конвертируем в положительное число
+            return int(binary_str, 2)
+
     def makeSensorsData(self):
         self.id_list = []
         self.sensors_type_list = []
@@ -77,27 +109,43 @@ class DataFromPLC:
     def makeIoAndVar(self):
         for i in range(0, len(self.Ui_value)):
             self.data_io.append(f"Ui{i+1}")
-            type_input = self.Ui_value[i][1]
-            if (type_input == 2):
-                self.data_io_var.append(self.get_key(self.Di, self.Ui_value[i][0]))
+            self.data_io_type.append(self.Ui_value[i][1])
+            self.data_io_type_human.append(Literal.types_io_input[self.Ui_value[i][1]])
+            self.data_io_product.append(self.Ui_value[i][2])
+            self.data_io_product_human.append(self.io_product_key[self.Ui_value[i][2]])
+            if(i < 6):
+                self.data_io_min_human.append(self.binary_to_negative_decimal(bin(self.Ui_value[i][3])[2:]))
+                self.data_io_min.append(self.Ui_value[i][3])
+                self.data_io_max.append(self.Ui_value[i][4])
+            if (self.data_io_type[i] == 2):
+                self.data_io_var_human.append(self.get_key(self.Di, self.Ui_value[i][0]))
+                self.data_io_var.append(self.Ui_value[i][0])
             else:
-                self.data_io_var.append(self.get_key(self.Ai, self.Ui_value[i][0]))
+                self.data_io_var_human.append(self.get_key(self.Ai, self.Ui_value[i][0]))
+                self.data_io_var.append(self.Ui_value[i][0])
         for i in range(0, len(self.Uo_value)):
+            self.data_io_type.append(self.Uo_value[i][1])
+            self.data_io_type_human.append(Literal.types_io_output_2[self.Uo_value[i][1]])
             self.data_io.append(f"Uo{i+1}")
             if (self.is_bit_set(self.analog_dig_bit, i)):
-                self.data_io_var.append(self.get_key(self.Do, self.Uo_value[i][0]))
+                self.data_io_var_human.append(self.get_key(self.Do, self.Uo_value[i][0]))
+                self.data_io_var.append(self.Uo_value[i][0])
             else:
-                self.data_io_var.append(self.get_key(self.Ao, self.Uo_value[i][0]))
+                self.data_io_var_human.append(self.get_key(self.Ao, self.Uo_value[i][0]))
+                self.data_io_var.append(self.Uo_value[i][0])
         for i in range(0, len(self.Q_value)):
             self.data_io.append(f"Q{i + 1}")
             key = self.get_key(self.Do, self.Q_value[i][0])
             if (key != None):
-                self.data_io_var.append(key)
+                self.data_io_var_human.append(key)
+                self.data_io_var.append(self.Q_value[i][0])
             else:
-                self.data_io_var.append('-')
+                self.data_io_var_human.append('-')
+                self.data_io_var.append(self.Q_value[i][0])
         for i in range(0, len(self.T_value)):
             self.data_io.append(f"T{i + 1}")
-            self.data_io_var.append(self.get_key(self.Do, self.T_value[i][0]))
+            self.data_io_var_human.append(self.get_key(self.Do, self.T_value[i][0]))
+            self.data_io_var.append(self.T_value[i][0])
 
     def readAllData(self):
         self.readIO()
@@ -110,6 +158,7 @@ class DataFromPLC:
         self.readSensors()
         self.makeIoAndVar()
         self.makeSensorsData()
+
     def readIO(self):
         reg_analog_digit = 0
         reg_pwm = 0
@@ -202,7 +251,11 @@ class DataFromPLC:
 
         print("Данные по входам человеческие:")
         print(self.data_io)
-        print(self.data_io_var)
+        print(self.data_io_var_human)
+        print(self.data_io_type_human)
+        print(self.data_io_product_human)
+        print(self.data_io_min)
+        print(self.data_io_max)
 
         print("Данные по modbus sensors:")
         print(self.id_list)

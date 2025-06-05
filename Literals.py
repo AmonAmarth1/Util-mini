@@ -34,7 +34,9 @@ class Literal:
     types_key_io = {'Di': DIGITAL_INPUT, 'Ai': RESISTANCE_INPUT, 'Do': DIGITAL_OUTPUT, 'Ao': VOLTAGE_OUTPUT}
     types_io_input = {0: "Voltage", 1: "Current", 2: "Digital", 3: "Resistance"}
     types_io_output = {0: "0-10V", 1: "PWM", 2: "Digital"}
+    types_io_output_2 = {17: "Digital", 18: "0-10V", 19: "PWM"}
     types_product_num = {"--": 0, "NC": 1, "NO": 2, "4-20мА": 3, "0-1": 4, "0-5": 5, "0-10": 6, "3950": 7, "3435": 8, "NTC20k": 9, "pt1000": 10}
+
 
     reg_analog_var_access = 256
 

@@ -7,6 +7,10 @@ class DataFileSave:
         self.data_io_for_modbus = []
         self.data_io_var = []
         self.data_io = []
+        self.data_io_type = []
+        self.data_io_product = []
+        self.data_io_min = []
+        self.data_io_max = []
 
         self.converter_count_input = 0
         self.converter_count_output = 0
@@ -38,10 +42,14 @@ class DataFileSave:
         self.modbus_var_sensors = []
         self.modbus_data_for_sensors = []
 
-    def setIOData(self, io, io_var, io_modbus=0):
+    def setIOData(self, io, io_var, io_type, io_product, io_min, io_max, io_modbus=0):
         self.data_io_for_modbus = io_modbus
         self.data_io_var = io_var
         self.data_io = io
+        self.data_io_type = io_type
+        self.data_io_product = io_product
+        self.data_io_min = io_min
+        self.data_io_max = io_max
 
     def setConverterData(self, count_input, count_output, modbus_use, type_current, data_modbus=0):
         self.converter_count_input = count_input
@@ -104,106 +112,119 @@ class DataFileSave:
 
 
     def createDataIO(self, ws, sourse):
+        ws[f"A{1}"] = "Номер контакта"
+        ws[f"B{1}"] = "Переменная"
+        ws[f"C{1}"] = "Тип"
+        ws[f"D{1}"] = "Метод"
+        ws[f"E{1}"] = "Min"
+        ws[f"F{1}"] = "Max"
         if (sourse == 'eplan'):
             for i in range(0, len(self.data_io)):
-                ws[f"A{i + 1}"] = self.data_io[i]
-                ws[f"B{i + 1}"] = self.data_io_var[i][0]
+                ws[f"A{i + 2}"] = self.data_io[i]
+                ws[f"B{i + 2}"] = self.data_io_var[i][0]
                 str = self.tuples_to_string(self.data_io_for_modbus[i])
-                ws[f"C{i + 1}"] = str
+                ws[f"C{i + 2}"] = str
         if (sourse == 'plc'):
             for i in range(0, len(self.data_io)):
-                ws[f"A{i + 1}"] = self.data_io[i]
-                ws[f"B{i + 1}"] = self.data_io_var[i]
+                ws[f"A{i + 2}"] = self.data_io[i]
+                ws[f"B{i + 2}"] = self.data_io_var[i]
+                if (i < 18):
+                    ws[f"D{i + 2}"] = self.data_io_product[i]
+                if (i < 25):
+                    ws[f"C{i + 2}"] = self.data_io_type[i]
+                if (i < 6):
+                    ws[f"E{i + 2}"] = self.data_io_min[i]
+                    ws[f"F{i + 2}"] = self.data_io_max[i]
 
     def createDataConverter(self, ws, sourse):
-        ws['E1'] = "Количество ПЧ приток:"
-        ws['F1'] = self.converter_count_input
+        ws['I1'] = "Количество ПЧ приток:"
+        ws['J1'] = self.converter_count_input
 
-        ws['E2'] = "Количество ПЧ вытяжка:"
-        ws['F2'] = self.converter_count_output
+        ws['I2'] = "Количество ПЧ вытяжка:"
+        ws['J2'] = self.converter_count_output
 
-        ws['E3'] = "Modbus используется:"
-        ws['F3'] = self.converter_modbus_use
+        ws['I3'] = "Modbus используется:"
+        ws['J3'] = self.converter_modbus_use
 
-        ws['E4'] = "Тип ПЧ:"
-        ws['F4'] = self.converter_type_current
+        ws['I4'] = "Тип ПЧ:"
+        ws['J4'] = self.converter_type_current
 
         if (sourse == 'eplan'):
-            ws['E5'] = "Данные для modbus:"
-            ws['F5'] = self.tuples_to_string(self.converter_data_for_modbus)
+            ws['I5'] = "Данные для modbus:"
+            ws['J5'] = self.tuples_to_string(self.converter_data_for_modbus)
 
     def createDataHeat(self, ws, sourse):
-        ws['H1'] = "Тип 1 нагревателя:"
-        ws['I1'] = self.heat1_type
+        ws['L1'] = "Тип 1 нагревателя:"
+        ws['M1'] = self.heat1_type
 
-        ws['H2'] = "Нагреватель 2 используется:"
-        ws['I2'] = self.heat2_use
+        ws['L2'] = "Нагреватель 2 используется:"
+        ws['M2'] = self.heat2_use
 
-        ws['H3'] = "Тип 2 нагревателя:"
-        ws['I3'] = self.heat2_type
+        ws['L3'] = "Тип 2 нагревателя:"
+        ws['M3'] = self.heat2_type
 
         if (sourse == 'eplan'):
-            ws['H4'] = "Данные для modbus:"
-            ws['I4'] = self.tuples_to_string(self.heat_data_for_modbus)
+            ws['L4'] = "Данные для modbus:"
+            ws['M4'] = self.tuples_to_string(self.heat_data_for_modbus)
 
     def createDataRecup(self, ws, sourse):
-        ws['E7'] = "Рекуператор используется:"
-        ws['F7'] = self.recup_use
+        ws['i7'] = "Рекуператор используется:"
+        ws['J7'] = self.recup_use
 
-        ws['E8'] = "Тип рекуператора:"
-        ws['F8'] = self.recup_type
+        ws['I8'] = "Тип рекуператора:"
+        ws['J8'] = self.recup_type
 
         if (sourse == 'eplan'):
-            ws['E9'] = "Данные для modbus:"
-            ws['F9'] = self.tuples_to_string(self.recup_data_for_modbus)
+            ws['I9'] = "Данные для modbus:"
+            ws['FJ9'] = self.tuples_to_string(self.recup_data_for_modbus)
 
     def createDataDx(self, ws, sourse):
-        ws['E11'] = "Охладитель используется:"
-        ws['F11'] = self.dx_use
+        ws['I11'] = "Охладитель используется:"
+        ws['J11'] = self.dx_use
 
-        ws['E12'] = "Тип охладителя:"
-        ws['F12'] = self.dx_type
+        ws['I12'] = "Тип охладителя:"
+        ws['J12'] = self.dx_type
 
         if (sourse == 'eplan'):
-            ws['E13'] = "Данные для modbus:"
-            ws['F13'] = self.tuples_to_string(self.dx_data_for_modbus)
+            ws['I13'] = "Данные для modbus:"
+            ws['J13'] = self.tuples_to_string(self.dx_data_for_modbus)
 
     def createDataHumidifier(self, ws, sourse):
-        ws['E15'] = "Увлажнитель используется:"
-        ws['F15'] = self.humidifier_use
+        ws['I15'] = "Увлажнитель используется:"
+        ws['J15'] = self.humidifier_use
 
         if (sourse == 'eplan'):
-            ws['E16'] = "Данные для modbus:"
-            ws['F16'] = self.tuples_to_string(self.humidifier_data_for_modbus)
+            ws['I16'] = "Данные для modbus:"
+            ws['J16'] = self.tuples_to_string(self.humidifier_data_for_modbus)
 
 
     def createDataMix(self, ws, sourse):
-        ws['E18'] = "Камера смешения используется:"
-        ws['F18'] = self.mix_camera_use
+        ws['I18'] = "Камера смешения используется:"
+        ws['J18'] = self.mix_camera_use
 
         if (sourse == 'eplan'):
-            ws['E19'] = "Данные для modbus:"
-            ws['F19'] = self.tuples_to_string(self.mix_camera_data_for_modbus)
+            ws['I19'] = "Данные для modbus:"
+            ws['J19'] = self.tuples_to_string(self.mix_camera_data_for_modbus)
 
     def createDataSensor(self, ws, sourse):
         num = 0
-        ws['E21'] = "Modbus датчики:"
+        ws['I21'] = "Modbus датчики:"
         if (sourse == 'eplan'):
             for i in range(0, len(self.modbus_name_using_sensors)):
-                ws[f"E{22 + i}"] = self.modbus_name_using_sensors[i]
-                ws[f"F{22 + i}"] = self.modbus_name_type_sensors[i]
-                ws[f"G{22 + i}"] = self.modbus_var_sensors[i]
+                ws[f"I{22 + i}"] = self.modbus_name_using_sensors[i]
+                ws[f"J{22 + i}"] = self.modbus_name_type_sensors[i]
+                ws[f"K{22 + i}"] = self.modbus_var_sensors[i]
                 num = i + 1
-                ws[f"E{22 + num}"] = self.tuples_to_string(self.modbus_data_for_sensors)
+                ws[f"L{22 + num}"] = self.tuples_to_string(self.modbus_data_for_sensors)
 
         if (sourse == 'plc'):
-            ws['E22'] = "id modbus датчика:"
-            ws['F22'] = "Тип modbus датчика:"
-            ws['G22'] = "Переменная датчика:"
+            ws['I22'] = "id modbus датчика:"
+            ws['J22'] = "Тип modbus датчика:"
+            ws['K22'] = "Переменная датчика:"
             for i in range(0, len(self.id_sensors_list)):
-                ws[f"E{23 + i}"] = self.id_sensors_list[i]
-                ws[f"F{23 + i}"] = self.modbus_name_type_sensors[i]
-                ws[f"G{23 + i}"] = self.modbus_var_sensors[i]
+                ws[f"I{23 + i}"] = self.id_sensors_list[i]
+                ws[f"J{23 + i}"] = self.modbus_name_type_sensors[i]
+                ws[f"K{23 + i}"] = self.modbus_var_sensors[i]
 
     def tuples_to_string(self, tuples_list, separator=', '):
         # Преобразуем каждый кортеж в строку и объединяем их с помощью разделителя

@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (
 
 import Modbus_rtu
 from Modbus_rtu import create_modbus_rtu_packet
+import Test_deepseek
 
 CONFIG_FILE = 'config.json'
 
@@ -134,7 +135,7 @@ class MyApp(QWidget):
         self.controllerMixCamera = ControllerMixCamera()
         self.contollerModbusSensors = ControllerModbusSensor()
         self.dataPLC = DataPLC()
-
+        self.data_from_plc = None
 
         self.dataSaveFile = DataFileSave()
         # тут вызывать функцию конфиг
@@ -245,7 +246,7 @@ class MyApp(QWidget):
 
                 if (sourse == 'Eplan'):
 
-                    self.dataSaveFile.setIOData(self.dataPLC.getDataIO(), self.dataPLC.getDataVar(), self.dataPLC.getDataModbus())
+                    self.dataSaveFile.setIOData(self.dataPLC.getDataIO(), self.dataPLC.getDataVar(), 0, 0, 0, 0, self.dataPLC.getDataModbus())
                     self.dataSaveFile.setConverterData(self.controllerConverter.getCountInputConverter(), self.controllerConverter.getCountOutputConverter(), self.controllerConverter.getModbusUse(), self.controllerConverter.type_current_converter_name, self.controllerConverter.getDataForModbus())
                     self.dataSaveFile.setHeatData(self.controllerHeat.heat1_type_name, self.controllerHeat.heat2_use, self.controllerHeat.heat2_type_name, self.controllerHeat.getDataForModbus())
                     self.dataSaveFile.setRecupData(self.contollerRecup.recup_use, self.contollerRecup.recup_type_name, self.contollerRecup.getDataForModbus())
@@ -258,7 +259,7 @@ class MyApp(QWidget):
 
                 else:
 
-                    self.dataSaveFile.setIOData(self.data_from_plc.data_io, self.data_from_plc.data_io_var)
+                    self.dataSaveFile.setIOData(self.data_from_plc.data_io, self.data_from_plc.data_io_var_human, self.data_from_plc.data_io_type_human, self.data_from_plc.data_io_product_human, self.data_from_plc.data_io_min_human, self.data_from_plc.data_io_max)
                     self.dataSaveFile.setConverterData(self.data_from_plc.converter_data[2], self.data_from_plc.converter_data[3], self.data_from_plc.converter_data[0], self.data_from_plc.converter_type)
                     self.dataSaveFile.setHeatData(self.data_from_plc.type_heat1, self.data_from_plc.heat_data[1], self.data_from_plc.type_heat2)
                     self.dataSaveFile.setRecupData(self.data_from_plc.recup_data[0], self.data_from_plc.recup_type)
@@ -301,14 +302,18 @@ class MyApp(QWidget):
             self.driverModbusWriter.closePort()
         else:
             print("finish")
-            self.output_text.append('Выгрузка...')
+            self.output_text.append('Данные выгружены...')
             self.driverModbusWriter.closePort()
 
         pass
 
     def open_config_window(self):
-        self.window_config = WindowConfig(self.config)
+
+
+        self.window_config = WindowConfig(self.config, self.dataPLC, self.data_from_plc)
+
         self.window_config.show()
+
 
     def clear_function(self):
         self.output_text.clear()
