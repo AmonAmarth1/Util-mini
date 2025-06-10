@@ -5,10 +5,10 @@ from PyQt5.QtCore import QPropertyAnimation, Qt
 
 
 class CollapsibleWidget(QWidget):
-    def __init__(self, layout, title="", parent=None):
+    def __init__(self, layout, x, y, a, b, title="", parent=None):
         super().__init__(parent)
 
-        self.setGeometry(500, 500, 600, 500)
+        self.setGeometry(x, y, a, b)
 
         # Кнопка для сворачивания/разворачивания
         self.toggle_button = QToolButton(text=title, checkable=True, checked=False)
@@ -26,7 +26,7 @@ class CollapsibleWidget(QWidget):
 
         # Внутренний контент
         self.content_widget = QWidget()
-        self.content_widget.setMinimumSize(400, 400)
+        self.content_widget.setMinimumSize(x, y)
 
         self.content_widget.setLayout(layout)
         self.content_area.setWidget(self.content_widget)

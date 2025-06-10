@@ -34,7 +34,7 @@ class Literal:
     types_key_io = {'Di': DIGITAL_INPUT, 'Ai': RESISTANCE_INPUT, 'Do': DIGITAL_OUTPUT, 'Ao': VOLTAGE_OUTPUT}
     types_io_input = {0: "Voltage", 1: "Current", 2: "Digital", 3: "Resistance"}
     types_io_output = {0: "0-10V", 1: "PWM", 2: "Digital"}
-    types_io_output_2 = {17: "Digital", 18: "0-10V", 19: "PWM"}
+    types_io_output_2 = {18: "0-10V", 19: "PWM", 17: "Digital"}
     types_product_num = {"--": 0, "NC": 1, "NO": 2, "4-20мА": 3, "0-1": 4, "0-5": 5, "0-10": 6, "3950": 7, "3435": 8, "NTC20k": 9, "pt1000": 10}
 
 
@@ -44,31 +44,32 @@ class Literal:
     output_vent = "2U"
     types_converter = {"INVT": 0, "другой": 1, "VCI": 2, "LCI": 3, "Danfoss": 4, "Canroon": 5}
     types_converter_num = {0: "INVT", 1: "другой", 2: "VCI", 3: "LCI", 4: "Danfoss", 5: "Canroon"}
-    register_converter = {"input_converter_modbus_use": 8, "output_converter_modbus_use": 7, "input_count": 51, "output_count": 60, "input_type": 53, "output_type": 52}
-
+    register_converter = {"input_converter_modbus_use": 8, "output_converter_modbus_use": 7, "input_count": 51, "output_count": 60, "input_type": 53, "output_type": 52, "input_type_reserve": 1686, "output_type_reserve": 1655, "input_adres_1": 55,"output_adres_1": 54}
+    reserve_converter = {0: "нет", 1: "Группа", 2: "Горячий", 3: "Каскадный"}
     '''
        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
        type_reg: 6 - WRITE SINGLE REGISTER, 5 - WRITE SINGLE COIL, 7 - Write long 4 byte
        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     '''
-    type_reg_converter = {"input_converter_modbus_use": 5, "output_converter_modbus_use": 5, "input_count": 6, "output_count": 6, "input_type": 6, "output_type": 6}
+    type_reg_converter = {"input_converter_modbus_use": 5, "output_converter_modbus_use": 5, "input_count": 6, "output_count": 6, "input_type": 6, "output_type": 6, "input_type_reserve": 6, "output_type_reserve": 6, "input_adres_1": 6,"output_adres_1": 6}
 
 
     type_heat1 = {"electrical": "HE1", "liquid": "Y1"}
     type_heat_num = {0: "electrical", 1: "liquid"}
+    type_heat_pump_reserve = {0: "Нет", 1: "Есть"}
     type_heat2 = {"humid": "Y2"}
-    reg_heat = {"heat1_type": 22, "heat2_use": 17, "heat2_type": 16}
-    type_reg_heat = {"heat1_type": 5, "heat2_use": 5, "heat2_type": 5}
+    reg_heat = {"heat1_type": 22, "heat2_use": 17, "heat2_type": 16, "heat1_resereve_pump": 37,  "heat2_resereve_pump": 38}
+    type_reg_heat = {"heat1_type": 5, "heat2_use": 5, "heat2_type": 5, "heat1_resereve_pump": 5, "heat2_resereve_pump": 5}
 
     type_recup = {"plastina": "3Y1", "rotor": "9U1", "glikol": "Y5"}
-    type_recup_num = {0: "plastina", 1: "rotor", 2: "glikol"}
-    reg_recup = {"use_recup": 19, "type_recup": 1817}
-    type_reg_recup = {"use_recup": 5, "type_recup": 6}
+    type_recup_num = {0: "None", 1: "plastina", 2: "rotor", 3: "glikol"}
+    reg_recup = {"use_recup": 19, "type_recup": 1817, "activate_modbus": 142, "id": 678, "nominal_rpm": 679, "type_conv": 680}
+    type_reg_recup = {"use_recup": 5, "type_recup": 6, "activate_modbus": 5, "id": 6, "nominal_rpm": 6, "type_conv": 6}
 
     type_dx = {"freon": "E1", "liquid": "Y3"}
-    type_dx_num = {0: "-", 1: "A", 2: "AA"}
-    reg_dx = {"use_dx": 24, "config_dx": 1627}
-    type_reg_dx = {"use_dx": 5, "config_dx": 6}
+    type_dx_num = {0: "-", 1: "A", 2: "AA", 3: "AAA", 4: "AD", 5: "ADD"}
+    reg_dx = {"use_dx": 24, "config_dx": 1627, "heat_dx": 25}
+    type_reg_dx = {"use_dx": 5, "config_dx": 6, "heat_dx": 5}
 
     humidifier_type = {0: "TH1"}
     reg_humidifier = {"humidifier_use": 11}

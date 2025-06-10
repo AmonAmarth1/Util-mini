@@ -27,25 +27,28 @@ from DriverModbusWriteDataPLC import DriverModbusWriteDataPLC
 from DataFromPLC import DataFromPLC
 
 from Gui_IO import Gui_IO
+from Gui_Convereter import Gui_Converter
+from Gui_heat import Gui_Heat
+from Gui_Recup import Gui_Recup
+from Gui_dx import Gui_dx
 from PyQt5.QtCore import Qt, QSize
 class WindowConfig(QWidget):
-    def __init__(self, config, eplan_IO, data_plc=None):
+    def __init__(self, config, eplan_IO=None, data_from_plc=None):
         super().__init__()
         self.config = config
         self.initUI()
 
         self.eplan_IO = eplan_IO
-        self.data_from_plc = data_plc
+        self.eplan_converter = None
+        self.eplan_heat = None
+        self.eplan_recup = None
+        self.eplan_dx = None
+
+        self.data_from_plc = data_from_plc
 
     def initUI(self):
         self.setWindowTitle('Config window')
         self.setGeometry(300, 100, 600, 500)
-
-        self.scroll = QScrollArea()
-        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.scroll.setWidgetResizable(True)
-
 
         self.layout = QVBoxLayout()
 
@@ -88,8 +91,24 @@ class WindowConfig(QWidget):
             self.layout_Out.addWidget(self.widget_T_1_2[i], 2, i)
 
 
-        self.layout.addWidget(CollapsibleWidget(self.layout_In, "Конфигурация входов Ui"))
-        self.layout.addWidget(CollapsibleWidget(self.layout_Out, "Конфигурация выходов Uo, Q, T"))
+        self.layout.addWidget(CollapsibleWidget(self.layout_In, 400, 380, 600, 500, "Конфигурация входов Ui"))
+        self.layout.addWidget(CollapsibleWidget(self.layout_Out, 400, 300, 600, 500, "Конфигурация выходов Uo, Q, T"))
+
+        self.layout_converter = QHBoxLayout()
+        self.converter = Gui_Converter()
+        self.recup = Gui_Recup()
+        self.layout_converter.addWidget(self.converter)
+        self.layout_converter.addWidget(self.recup)
+        self.layout.addWidget(CollapsibleWidget(self.layout_converter, 0, 0, 0, 0,"Конфигурация Вентиляторов и рекуператора"))
+
+        self.layout_heat = QHBoxLayout()
+        self.heat = Gui_Heat()
+        self.dx = Gui_dx()
+        self.layout_heat.addWidget(self.heat)
+        self.layout_heat.addWidget(self.dx)
+        self.layout.addWidget(CollapsibleWidget(self.layout_heat, 0, 0, 0, 0, "Конфигурация нагревателей и охладителя"))
+
+
         self.layout.addStretch()
 
         self.main_widget = QWidget()
@@ -105,30 +124,160 @@ class WindowConfig(QWidget):
     def initIO(self, layout):
         pass
 
+    def setDataFromPLC(self, data_from_plc):
+        self.data_from_plc = data_from_plc
+
+    def setDataFromEplanIO(self, data_from_eplan_IO):
+        self.eplan_IO = data_from_eplan_IO
+
+    def setDataFromEplanConv(self, data_from_eplan_conv):
+        self.eplan_converter = data_from_eplan_conv
+
+    def setDataFromEplanHeat(self, data_from_eplan_heat):
+        self.eplan_heat = data_from_eplan_heat
+
+    def setDataFromEplanRecup(self, data_from_eplan_recup):
+        self.eplan_recup = data_from_eplan_recup
+
+    def setDataFromEplanDx(self, data_from_eplan_dx):
+        self.eplan_dx = data_from_eplan_dx
+
     def load_function(self):
 
         if self.data_sourse.currentText() == 'eplan':
-            print("load data eplan")
-            for i in range (0, len(self.eplan_IO.data_io)):
-                Ui = self.eplan_IO.data_io[i].find("UI")
-                if Ui != -1:
-                    index = int(self.eplan_IO.data_io[i][2:])
-                    self.widget_Ui_1_18[index - 1].combo_var_in_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
-                    type =  self.eplan_IO.data_io_for_modbus[i][1][0]
-                    if type == 2:
-                        self.widget_Ui_1_18[index - 1].combo_var_in_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
-                        self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(2)
-                    else:
-                        self.widget_Ui_1_18[index - 1].combo_var_in_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
-                        self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][1][0])
+            print("load data from eplan")
 
-                UO = self.eplan_IO.data_io[i].find("UO")
-                Q = self.eplan_IO.data_io[i].find("Q")
-                T = self.eplan_IO.data_io[i].find("T")
-                pass
+            if self.eplan_IO != None:
+
+                for i in range(0, len(self.eplan_IO.data_io)):
+
+                    Ui = self.eplan_IO.data_io[i].find("UI")
+                    if Ui != -1:
+                        index = int(self.eplan_IO.data_io[i][2:])
+                        type =  self.eplan_IO.data_io_for_modbus[i][1][0]
+
+                        if type == 2:
+                            self.widget_Ui_1_18[index - 1].combo_var_in_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                            self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][1][0])
+
+                        else:
+                            self.widget_Ui_1_18[index - 1].combo_var_in_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                            self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][1][0])
+
+                        if self.eplan_IO.data_io_for_modbus[i][2][0] != None:
+                            self.widget_Ui_1_18[index - 1].combo_type_io_input_product.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][2][0])
+
+
+                    UO = self.eplan_IO.data_io[i].find("UO")
+                    U1 = self.eplan_IO.data_io[i].find("U0")
+                    if UO != -1 or U1 != -1:
+                        index = int(self.eplan_IO.data_io[i][2:])
+                        type = self.eplan_IO.data_io_for_modbus[i][1][0]
+
+                        if type == 17:
+                            self.widget_Uo_1_8[index - 1].combo_var_out_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                            self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(2)
+                        elif type == 18:
+                            self.widget_Uo_1_8[index - 1].combo_var_out_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                            self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(0)
+                        else:
+                            self.widget_Uo_1_8[index - 1].combo_var_out_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                            self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(1)
+
+
+                    Q = self.eplan_IO.data_io[i].find("Q")
+                    if Q != -1:
+                        index = int(self.eplan_IO.data_io[i][1:])
+                        self.widget_Q_1_5[index - 1].combo_var_out_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+
+
+                    T = self.eplan_IO.data_io[i].find("T")
+                    if T != -1:
+                        index = int(self.eplan_IO.data_io[i][1:])
+                        self.widget_T_1_2[index - 1].combo_var_out_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+
+            if self.eplan_converter != None:
+                self.converter.in_num_edit.setText(str(self.eplan_converter.getCountInputConverter()))
+                self.converter.out_num_edit.setText(str(self.eplan_converter.getCountOutputConverter()))
+                self.converter.combo_in_modbus_use.setCurrentIndex(int(self.eplan_converter.getModbusUse()))
+                self.converter.combo_out_modbus_use.setCurrentIndex(int(self.eplan_converter.getModbusUse()))
+                self.converter.combo_in_type.setCurrentIndex(self.eplan_converter.getTypeCurrecntConverter())
+                self.converter.combo_out_type.setCurrentIndex(self.eplan_converter.getTypeCurrecntConverter())
+
+            if self.eplan_heat != None:
+                self.heat.heat1_type_combo.setCurrentIndex(self.eplan_heat.heat1_type)
+                self.heat.heat2_use_combo.setCurrentIndex(self.eplan_heat.heat2_use)
+                self.heat.heat2_type_combo.setCurrentIndex(self.eplan_heat.heat2_type)
+
+                self.recup.recup_use_combo.setCurrentIndex(self.eplan_recup.recup_use)
+                self.recup.recup_type_combo.setCurrentIndex(self.eplan_recup.recup_type)
+
+                self.dx.dx_use_combo.setCurrentIndex(self.eplan_dx.dx_use)
+                self.dx.type_dx_combo.setCurrentIndex(self.eplan_dx.dx_type)
+
         else:
-            print("load data plc")
+            print("load data from plc")
 
+            if self.data_from_plc != None:
+                for i in range(0, len(self.data_from_plc.Ui_value)):
+                    type = self.data_from_plc.Ui_value[i][1]
 
-        pass
+                    if type == 2:
+                        self.widget_Ui_1_18[i].combo_var_in_digit.setCurrentIndex(self.data_from_plc.Ui_value[i][0])
+                    else:
+                        self.widget_Ui_1_18[i].combo_var_in_analog.setCurrentIndex(self.data_from_plc.Ui_value[i][0])
+                    self.widget_Ui_1_18[i].combo_io_input_type.setCurrentIndex(type)
+                    self.widget_Ui_1_18[i].combo_type_io_input_product.setCurrentIndex(self.data_from_plc.Ui_value[i][2])
 
+                    if type < 2:
+                        self.widget_Ui_1_18[i].line_edit_min.setText(str(self.data_from_plc.Ui_value[i][3]))
+                        self.widget_Ui_1_18[i].line_edit_min.setText(str(self.data_from_plc.Ui_value[i][4]))
+
+                for i in range(0, len(self.data_from_plc.Uo_value)):
+                    type = self.data_from_plc.Uo_value[i][1]
+
+                    if type == 17:
+                        self.widget_Uo_1_8[i].combo_var_out_digit.setCurrentIndex(self.data_from_plc.Uo_value[i][0])
+                        self.widget_Uo_1_8[i].combo_io_output_type.setCurrentIndex(2)
+                    elif type == 18:
+                        self.widget_Uo_1_8[i].combo_var_out_analog.setCurrentIndex(self.data_from_plc.Uo_value[i][0])
+                        self.widget_Uo_1_8[i].combo_io_output_type.setCurrentIndex(0)
+                        self.widget_Uo_1_8[i].line_edit_period.setText(str(self.data_from_plc.Uo_value[i][2]))
+                    else:
+                        self.widget_Uo_1_8[i].combo_var_out_analog.setCurrentIndex(self.data_from_plc.Uo_value[i][0])
+                        self.widget_Uo_1_8[i].combo_io_output_type.setCurrentIndex(1)
+                        self.widget_Uo_1_8[i].line_edit_period.setText(str(self.data_from_plc.Uo_value[i][2]))
+
+                for i in range(0, len(self.data_from_plc.Q_value)):
+                    self.widget_Q_1_5[i].combo_var_out_digit.setCurrentIndex(self.data_from_plc.Q_value[i][0])
+
+                for i in range(0, len(self.data_from_plc.T_value)):
+                    self.widget_T_1_2[i].combo_var_out_digit.setCurrentIndex(self.data_from_plc.T_value[i][0])
+
+                self.converter.in_num_edit.setText(str(self.data_from_plc.converter_data[2]))
+                self.converter.out_num_edit.setText(str(self.data_from_plc.converter_data[3]))
+                self.converter.combo_in_modbus_use.setCurrentIndex(self.data_from_plc.converter_data[0])
+                self.converter.combo_out_modbus_use.setCurrentIndex(self.data_from_plc.converter_data[1])
+                self.converter.combo_in_type.setCurrentIndex(self.data_from_plc.converter_data[4])
+                self.converter.combo_out_type.setCurrentIndex(self.data_from_plc.converter_data[5])
+                self.converter.edit_in_id.setText(str(self.data_from_plc.converter_data[8]))
+                self.converter.edit_out_id.setText(str(self.data_from_plc.converter_data[9]))
+                self.converter.combo_in_reserve.setCurrentIndex(self.data_from_plc.converter_data[6])
+                self.converter.combo_out_reserve.setCurrentIndex(self.data_from_plc.converter_data[7])
+
+                self.heat.heat1_type_combo.setCurrentIndex(self.data_from_plc.heat_data[0])
+                self.heat.heat1_reserve_pump_combo.setCurrentIndex(self.data_from_plc.heat_data[3])
+                self.heat.heat2_use_combo.setCurrentIndex(self.data_from_plc.heat_data[1])
+                self.heat.heat2_type_combo.setCurrentIndex(self.data_from_plc.heat_data[2])
+                self.heat.heat2_reserve_pump_combo.setCurrentIndex(self.data_from_plc.heat_data[4])
+
+                self.recup.recup_use_combo.setCurrentIndex(self.data_from_plc.recup_data[0])
+                self.recup.recup_type_combo.setCurrentIndex(self.data_from_plc.recup_data[1])
+                self.recup.recup_modbus_use_combo.setCurrentIndex(self.data_from_plc.recup_data[2])
+                self.recup.recup_id_edit.setText(str(self.data_from_plc.recup_data[3]))
+                self.recup.recup_rpm_edit.setText(str(self.data_from_plc.recup_data[4]))
+                self.recup.recup_conv_type_combo.setCurrentIndex(self.data_from_plc.recup_data[5])
+
+                self.dx.dx_use_combo.setCurrentIndex(self.data_from_plc.dx_data[0])
+                self.dx.type_dx_combo.setCurrentIndex(self.data_from_plc.dx_data[1])
+                self.dx.dx_heat_combo.setCurrentIndex(self.data_from_plc.dx_data[2])

@@ -138,6 +138,8 @@ class MyApp(QWidget):
         self.data_from_plc = None
 
         self.dataSaveFile = DataFileSave()
+
+        self.window_config = None
         # тут вызывать функцию конфиг
         # config = твой клас конфига
 
@@ -150,6 +152,7 @@ class MyApp(QWidget):
             self.output_text.append("Ошибка загрузки conf!!!!!!!!")
         else:
             self.config.printDictionary()
+            self.window_config = WindowConfig(self.config)
             self.output_text.append('Conf загружен.')
 
     def choose_file_specification(self):
@@ -212,6 +215,13 @@ class MyApp(QWidget):
                 self.dataPLC.addDataIOModbus(self.controllerIO.getValueAndReg(self.dataFromEplan.getVar(i), self.dataFromEplan.getIO(i), self.dataFromEplan.getProduct_number_IO(i)))
                 self.dataPLC.addDataVarIO(self.controllerIO.getNameVarPlC(self.dataFromEplan.getVar(i)))
                 self.dataPLC.addDataIO(self.dataFromEplan.getIO(i))
+
+            self.window_config.setDataFromEplanIO(self.dataPLC)
+            self.window_config.setDataFromEplanConv(self.controllerConverter)
+            self.window_config.setDataFromEplanHeat(self.controllerHeat)
+            self.window_config.setDataFromEplanRecup(self.contollerRecup)
+            self.window_config.setDataFromEplanDx(self.contollerDx)
+
         except Exception:
             print("Ошибка обработки данных!!!!!!")
             self.output_text.append("Ошибка обработки данных!!!!!!")
@@ -225,6 +235,7 @@ class MyApp(QWidget):
         try:
             self.data_from_plc = DataFromPLC(self.config, int(self.id_combo.currentText().replace("Id ", "")), self.port_combo.currentText(), int(self.baudrate_combo.currentText()), 8, self.parity_combo.currentText()[:1])
             self.data_from_plc.readAllData()
+            self.window_config.setDataFromPLC(self.data_from_plc)
         except Exception as e:
             self.output_text.append(f"Произошло исключение: {e}")
             print(f"Произошло исключение: {e}")
@@ -310,7 +321,10 @@ class MyApp(QWidget):
     def open_config_window(self):
 
 
-        self.window_config = WindowConfig(self.config, self.dataPLC, self.data_from_plc)
+        self.window_config.setDataFromEplanIO(self.dataPLC)
+        self.window_config.setDataFromEplanConv(self.controllerConverter)
+
+        self.window_config.setDataFromPLC(self.data_from_plc)
 
         self.window_config.show()
 
