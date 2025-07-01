@@ -85,10 +85,13 @@ class Literal:
     N_H_ROOM = 12
     N_T_OUT = 3
     N_H_OUT = 13
+
     sensor_name_num = {"TH1": (N_T_IN, N_H_IN), "TH2": (N_T_ROOM, N_H_ROOM), "TH3": (N_T_OUT, N_H_OUT)}
     sensor_name_var = {"TH1": "температура приток, влажность приток", "TH2": "температура помещения, влажность помещения", "TH3": "температура вытяжки, влажность вытяжки"}
     sensor_type = {"LMF": 1, "ПЛВ-АМ": 2, "ДТВК-АМ": (3,4), "ДТВП-АМ": (3,4), "conel": (5,6), "LFH10R2": (7,8), "Oj PTH": 9, "DSC-G": 10, "ПДВ-2К": 11, "ПДВ-1К": 12}
     sensor_type_single = {1: "LMF", 2: "ПЛВ-АМ", 3: "ДТВК-АМ", 4: "ДТВК-АМ", 5: "conel", 6: "conel", 7: "LFH10R2", 8: "LFH10R2", 9: "Oj PTH", 10: "DSC-G", 11: "ПДВ-2К", 12: "ПДВ-1К"}
+    sensor_type_single_gui = {0: "LMF 51 100 Pa", 1: "LMF 51 10k Pa", 2: "Vemax ПДВ-АМ 1000Pa", 3: "ДТВК-АМтемпература", 4: "ДТВК-АМвлажность", 5: "Conel влажность", 6: "Conel температура", 7: "LFH10R температура",
+                          8: "LFH10R влажность", 9: "Oj PTH", 10: "DSC-G", 11: "ПДВ 2K <2K", 12: "ПДВ 2К >2K"}
     reg_modbus_sensor = {"id_sensor_1": 63, "type_sensor_1": 700, "type_var_sensor_1": 732, "modbus_sensors_use": 12, "sensors_use_bit": 189}
     type_reg_modbus_sensor = {"id_sensor_1": 6, "type_sensor_1": 6, "type_var_sensor_1": 6, "modbus_sensors_use": 5, "sensors_use_bit": 7}
 

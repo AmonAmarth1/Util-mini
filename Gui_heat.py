@@ -31,7 +31,7 @@ class Gui_Heat(QWidget):
         self.layout_heat1 = QVBoxLayout()
         self.layout_heat2 = QVBoxLayout()
 
-        self.heat1_name = QLabel("Нагреватель 1")
+        self.heat1_name = QLabel("Нагреватель 1:")
         self.layout_heat1.addWidget(self.heat1_name)
 
         self.layout_heat1_type = QHBoxLayout()
@@ -52,11 +52,11 @@ class Gui_Heat(QWidget):
 
         self.main_layout.addLayout(self.layout_heat1)
 
-        self.heat2_name = QLabel("Нагреватель 2")
+        self.heat2_name = QLabel("Нагреватель 2:")
         self.layout_heat2.addWidget(self.heat2_name)
 
         self.heat2_use = QHBoxLayout()
-        self.heat2_use_label = QLabel("Используется")
+        self.heat2_use_label = QLabel("Используется:")
         self.heat2_use_combo = QComboBox()
         self.heat2_use_combo.addItems(['Нет', 'Используется'])
         self.heat2_use.addWidget(self.heat2_use_label)

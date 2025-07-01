@@ -98,13 +98,18 @@ class DataFromPLC:
     def makeSensorsData(self):
         self.id_list = []
         self.sensors_type_list = []
+        self.sensors_type_list_raw = []
         self.sensors_var_list = []
+        self.sensors_var_list_raw = []
         for i in range(0, len(self.sensors_data)):
             if (self.sensors_data[i][0] == 0):
                 return 0
             self.id_list.append(self.sensors_data[i][0])
             self.sensors_type_list.append(Literal.sensor_type_single[self.sensors_data[i][1]])
             self.sensors_var_list.append(self.get_key(self.Ai, self.sensors_data[i][2]))
+
+            self.sensors_type_list_raw.append(self.sensors_data[i][1])
+            self.sensors_var_list_raw.append(self.sensors_data[i][2])
 
     def makeIoAndVar(self):
         for i in range(0, len(self.Ui_value)):

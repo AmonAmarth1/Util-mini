@@ -29,11 +29,11 @@ class Gui_Recup(QWidget):
 
         self.layout_recup = QVBoxLayout()
 
-        self.recup_name = QLabel("Рекуператор")
+        self.recup_name = QLabel("Рекуператор:")
         self.layout_recup.addWidget(self.recup_name)
 
         self.recup_use_layout = QHBoxLayout()
-        self.recup_use_label = QLabel("Используется")
+        self.recup_use_label = QLabel("Используется:")
         self.recup_use_combo = QComboBox()
         self.recup_use_combo.addItems(['Нет', 'Используется'])
         self.recup_use_layout.addWidget(self.recup_use_label)
@@ -82,7 +82,7 @@ class Gui_Recup(QWidget):
         self.recup_rpm_edit.hide()
 
         self.recup_conv_type_layout = QHBoxLayout()
-        self.recup_name_conv_label = QLabel("Тип ПЧ")
+        self.recup_name_conv_label = QLabel("Тип ПЧ:")
         self.recup_conv_type_combo = QComboBox()
         self.recup_conv_type_combo.addItems(self.type_conv)
         self.recup_conv_type_layout.addWidget(self.recup_name_conv_label)

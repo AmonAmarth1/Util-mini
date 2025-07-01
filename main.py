@@ -221,6 +221,9 @@ class MyApp(QWidget):
             self.window_config.setDataFromEplanHeat(self.controllerHeat)
             self.window_config.setDataFromEplanRecup(self.contollerRecup)
             self.window_config.setDataFromEplanDx(self.contollerDx)
+            self.window_config.setDataFromEplanHum(self.contollerHumidifier)
+            self.window_config.setDataFromEplanMix(self.controllerMixCamera)
+            self.window_config.setDataFromEplanSensors(self.contollerModbusSensors)
 
         except Exception:
             print("Ошибка обработки данных!!!!!!")
@@ -319,7 +322,6 @@ class MyApp(QWidget):
         pass
 
     def open_config_window(self):
-
 
         self.window_config.setDataFromEplanIO(self.dataPLC)
         self.window_config.setDataFromEplanConv(self.controllerConverter)

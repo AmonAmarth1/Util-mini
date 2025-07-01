@@ -22,11 +22,11 @@ class Gui_dx(QWidget):
 
         self.layout_dx = QVBoxLayout()
 
-        self.dx_name = QLabel("Охладитель")
+        self.dx_name = QLabel("Охладитель:")
         self.layout_dx.addWidget(self.dx_name)
 
         self.dx_use_layout = QHBoxLayout()
-        self.dx_use_label = QLabel("Используется")
+        self.dx_use_label = QLabel("Используется:")
         self.dx_use_combo = QComboBox()
         self.dx_use_combo.addItems(['Нет', 'Используется'])
         self.dx_use_layout.addWidget(self.dx_use_label)
@@ -42,7 +42,7 @@ class Gui_dx(QWidget):
         self.layout_dx.addLayout(self.layout_dx_type)
 
         self.dx_heat_layout = QHBoxLayout()
-        self.dx_heat_label = QLabel("Нагрев Dx")
+        self.dx_heat_label = QLabel("Нагрев Dx:")
         self.dx_heat_combo = QComboBox()
         self.dx_heat_combo.addItems(['Нет', 'Используется'])
         self.dx_heat_layout.addWidget(self.dx_heat_label)

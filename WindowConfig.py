@@ -31,6 +31,10 @@ from Gui_Convereter import Gui_Converter
 from Gui_heat import Gui_Heat
 from Gui_Recup import Gui_Recup
 from Gui_dx import Gui_dx
+from Gui_Humidifier import Gui_humidifier
+from Gui_mix_camera import Gui_mix_camera
+from Gui_sensors import Gui_sensors
+
 from PyQt5.QtCore import Qt, QSize
 class WindowConfig(QWidget):
     def __init__(self, config, eplan_IO=None, data_from_plc=None):
@@ -43,6 +47,9 @@ class WindowConfig(QWidget):
         self.eplan_heat = None
         self.eplan_recup = None
         self.eplan_dx = None
+        self.eplan_hum = None
+        self.eplan_mix = None
+        self.eplan_sensors = None
 
         self.data_from_plc = data_from_plc
 
@@ -57,7 +64,7 @@ class WindowConfig(QWidget):
         self.data_sourse = QComboBox(self)
         self.data_sourse.addItems(['eplan', 'plc'])
         self.qlabel_text = QLabel("Выбор источника данных для загрузки в окно конфигурации: ")
-        self.load_button = QPushButton('Загрузить данные ', self)
+        self.load_button = QPushButton('Показать данные ', self)
         self.load_button.clicked.connect(self.load_function)
 
         self.layout_sourse_data.addWidget(self.qlabel_text)
@@ -104,10 +111,22 @@ class WindowConfig(QWidget):
         self.layout_heat = QHBoxLayout()
         self.heat = Gui_Heat()
         self.dx = Gui_dx()
+        self.hum = Gui_humidifier()
+        self.mix = Gui_mix_camera()
         self.layout_heat.addWidget(self.heat)
         self.layout_heat.addWidget(self.dx)
-        self.layout.addWidget(CollapsibleWidget(self.layout_heat, 0, 0, 0, 0, "Конфигурация нагревателей и охладителя"))
+        self.layout_heat.addWidget(self.hum)
+        self.layout_heat.addWidget(self.mix)
+        self.layout.addWidget(CollapsibleWidget(self.layout_heat, 0, 0, 0, 0, "Конфигурация нагревателей, охладителя, камеры смешения"))
 
+        self.layout_sensors = QGridLayout()
+        self.widget_sensors_10 = []
+
+        for i in range(0, 10):
+            self.widget_sensors_10.append(Gui_sensors(self.config, i + 1))
+            self.layout_sensors.addWidget(self.widget_sensors_10[i], int(i / 5), int((i % 5)))
+        self.layout.addWidget(
+            CollapsibleWidget(self.layout_sensors, 0, 0, 0, 0, "Конфигурация Modbus датчиков"))
 
         self.layout.addStretch()
 
@@ -141,6 +160,15 @@ class WindowConfig(QWidget):
 
     def setDataFromEplanDx(self, data_from_eplan_dx):
         self.eplan_dx = data_from_eplan_dx
+
+    def setDataFromEplanHum(self, data_from_eplan_hum):
+        self.eplan_hum = data_from_eplan_hum
+
+    def setDataFromEplanMix(self, data_from_eplan_mix):
+        self.eplan_mix = data_from_eplan_mix
+
+    def setDataFromEplanSensors(self, data_from_eplan_sensors):
+        self.eplan_sensors = data_from_eplan_sensors
 
     def load_function(self):
 
@@ -215,6 +243,25 @@ class WindowConfig(QWidget):
                 self.dx.dx_use_combo.setCurrentIndex(self.eplan_dx.dx_use)
                 self.dx.type_dx_combo.setCurrentIndex(self.eplan_dx.dx_type)
 
+                self.hum.hum_use_combo.setCurrentIndex(self.eplan_hum.humidifier_use)
+
+                self.mix.mix_use_combo.setCurrentIndex(self.eplan_mix.mix_camera_use)
+
+                j = 0
+                for i in range(0, len(self.eplan_sensors.data_for_modbus)):
+                    if len(self.eplan_sensors.data_for_modbus[i]) == 3:
+                        self.widget_sensors_10[j].id_edit.setText(str(self.eplan_sensors.data_for_modbus[i][0][0]))
+                        self.widget_sensors_10[j].type_combo.setCurrentIndex(self.eplan_sensors.data_for_modbus[i][1][0])
+                        self.widget_sensors_10[j].var_combo.setCurrentIndex(self.eplan_sensors.data_for_modbus[i][2][0])
+                        j = j + 1
+                    if len(self.eplan_sensors.data_for_modbus[i]) == 6:
+                        self.widget_sensors_10[j].id_edit.setText(str(self.eplan_sensors.data_for_modbus[i][0][0]))
+                        self.widget_sensors_10[j].type_combo.setCurrentIndex(self.eplan_sensors.data_for_modbus[i][1][0])
+                        self.widget_sensors_10[j].var_combo.setCurrentIndex(self.eplan_sensors.data_for_modbus[i][2][0])
+                        self.widget_sensors_10[j + 1].id_edit.setText(str(self.eplan_sensors.data_for_modbus[i][3][0]))
+                        self.widget_sensors_10[j + 1].type_combo.setCurrentIndex(self.eplan_sensors.data_for_modbus[i][4][0])
+                        self.widget_sensors_10[j + 1].var_combo.setCurrentIndex(self.eplan_sensors.data_for_modbus[i][5][0])
+                        j = j + 2
         else:
             print("load data from plc")
 
@@ -281,3 +328,12 @@ class WindowConfig(QWidget):
                 self.dx.dx_use_combo.setCurrentIndex(self.data_from_plc.dx_data[0])
                 self.dx.type_dx_combo.setCurrentIndex(self.data_from_plc.dx_data[1])
                 self.dx.dx_heat_combo.setCurrentIndex(self.data_from_plc.dx_data[2])
+
+                self.hum.hum_use_combo.setCurrentIndex(self.data_from_plc.humidifier_data[0])
+
+                self.mix.mix_use_combo.setCurrentIndex(self.data_from_plc.mix_camera_data[0])
+
+                for i in range(0, len(self.data_from_plc.id_list)):
+                    self.widget_sensors_10[i].id_edit.setText(str(self.data_from_plc.id_list[i]))
+                    self.widget_sensors_10[i].type_combo.setCurrentIndex(self.data_from_plc.sensors_type_list_raw[i])
+                    self.widget_sensors_10[i].var_combo.setCurrentIndex(self.data_from_plc.sensors_var_list_raw[i])

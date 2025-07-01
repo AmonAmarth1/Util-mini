@@ -40,18 +40,18 @@ class Gui_Converter(QWidget):
         self.layout_in = QVBoxLayout()
         self.layout_out = QVBoxLayout()
 
-        self.name_in = QLabel("Вентилятор приток")
+        self.name_in = QLabel("Вентилятор приток:")
         self.layout_in.addWidget(self.name_in)
 
         self.layout_in_num = QHBoxLayout()
-        self.name_in_num = QLabel("Количество")
+        self.name_in_num = QLabel("Количество:")
         self.in_num_edit = QLineEdit('1')
         self.layout_in_num.addWidget(self.name_in_num)
         self.layout_in_num.addWidget(self.in_num_edit)
         self.layout_in.addLayout(self.layout_in_num)
 
         self.layout_in_modbus_use = QHBoxLayout()
-        self.name_in_modbus_use = QLabel("Тип управления")
+        self.name_in_modbus_use = QLabel("Тип управления:")
         self.combo_in_modbus_use = QComboBox()
         self.combo_in_modbus_use.addItems(['analog', 'modbus'])
         self.layout_in_modbus_use.addWidget(self.name_in_modbus_use)
@@ -59,7 +59,7 @@ class Gui_Converter(QWidget):
         self.layout_in.addLayout(self.layout_in_modbus_use)
 
         self.layout_in_type = QHBoxLayout()
-        self.name_in_conv = QLabel("Тип ПЧ")
+        self.name_in_conv = QLabel("Тип ПЧ:")
         self.combo_in_type = QComboBox()
         self.combo_in_type.addItems(self.type_conv)
         self.layout_in_type.addWidget(self.name_in_conv)
@@ -83,18 +83,18 @@ class Gui_Converter(QWidget):
 
         self.main_layout.addLayout(self.layout_in)
 
-        self.name_out = QLabel("Вентилятор вытяжка")
+        self.name_out = QLabel("Вентилятор вытяжка:")
         self.layout_out.addWidget(self.name_out)
 
         self.layout_out_num = QHBoxLayout()
-        self.name_out_num = QLabel("Количество")
+        self.name_out_num = QLabel("Количество:")
         self.out_num_edit = QLineEdit('1')
         self.layout_out_num.addWidget(self.name_out_num)
         self.layout_out_num.addWidget(self.out_num_edit)
         self.layout_out.addLayout(self.layout_out_num)
 
         self.layout_out_modbus_use = QHBoxLayout()
-        self.name_out_modbus_use = QLabel("Тип управления")
+        self.name_out_modbus_use = QLabel("Тип управления:")
         self.combo_out_modbus_use = QComboBox()
         self.combo_out_modbus_use.addItems(['analog', 'modbus'])
         self.layout_out_modbus_use.addWidget(self.name_out_modbus_use)
@@ -102,7 +102,7 @@ class Gui_Converter(QWidget):
         self.layout_out.addLayout(self.layout_out_modbus_use)
 
         self.layout_out_type = QHBoxLayout()
-        self.name_out_conv = QLabel("Тип ПЧ")
+        self.name_out_conv = QLabel("Тип ПЧ:")
         self.combo_out_type = QComboBox()
         self.combo_out_type.addItems(self.type_conv)
         self.layout_out_type.addWidget(self.name_out_conv)
