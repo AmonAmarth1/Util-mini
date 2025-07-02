@@ -130,6 +130,10 @@ class WindowConfig(QWidget):
 
         self.layout.addStretch()
 
+        self.save_button = QPushButton('Сохранить данные ', self)
+        self.save_button.clicked.connect(self.save_function)
+        self.layout.addWidget(self.save_button)
+
         self.main_widget = QWidget()
         self.main_widget.setLayout(self.layout)
         self.main_widget.setMinimumSize(1400, 600)
@@ -169,6 +173,9 @@ class WindowConfig(QWidget):
 
     def setDataFromEplanSensors(self, data_from_eplan_sensors):
         self.eplan_sensors = data_from_eplan_sensors
+
+    def setDataIOFromGui(self, data_io_from_gui):
+        self.data_io_from_gui = data_io_from_gui
 
     def load_function(self):
 
@@ -283,10 +290,10 @@ class WindowConfig(QWidget):
                 for i in range(0, len(self.data_from_plc.Uo_value)):
                     type = self.data_from_plc.Uo_value[i][1]
 
-                    if type == 17:
+                    if type == 2:
                         self.widget_Uo_1_8[i].combo_var_out_digit.setCurrentIndex(self.data_from_plc.Uo_value[i][0])
                         self.widget_Uo_1_8[i].combo_io_output_type.setCurrentIndex(2)
-                    elif type == 18:
+                    elif type == 0:
                         self.widget_Uo_1_8[i].combo_var_out_analog.setCurrentIndex(self.data_from_plc.Uo_value[i][0])
                         self.widget_Uo_1_8[i].combo_io_output_type.setCurrentIndex(0)
                         self.widget_Uo_1_8[i].line_edit_period.setText(str(self.data_from_plc.Uo_value[i][2]))
@@ -337,3 +344,47 @@ class WindowConfig(QWidget):
                     self.widget_sensors_10[i].id_edit.setText(str(self.data_from_plc.id_list[i]))
                     self.widget_sensors_10[i].type_combo.setCurrentIndex(self.data_from_plc.sensors_type_list_raw[i])
                     self.widget_sensors_10[i].var_combo.setCurrentIndex(self.data_from_plc.sensors_var_list_raw[i])
+
+    def save_function(self):
+        self.data_io_from_gui.clear()
+        for i in range(0, 18):
+            self.data_io_from_gui.type.append(self.widget_Ui_1_18[i].combo_io_input_type.currentIndex())
+            type = self.widget_Ui_1_18[i].combo_io_input_type.currentIndex()
+            if type != 2:
+                self.data_io_from_gui.var.append(self.widget_Ui_1_18[i].combo_var_in_analog.currentIndex())
+            else:
+                self.data_io_from_gui.var.append(self.widget_Ui_1_18[i].combo_var_in_digit.currentIndex())
+            self.data_io_from_gui.method.append(self.widget_Ui_1_18[i].combo_type_io_input_product.currentIndex())
+            if (i < 6):
+                try:
+                    self.data_io_from_gui.min.append(0 if self.widget_Ui_1_18[i].line_edit_min.text() == '' else int(self.widget_Ui_1_18[i].line_edit_min.text()))
+                    self.data_io_from_gui.max.append(0 if self.widget_Ui_1_18[i].line_edit_max.text() == '' else int(self.widget_Ui_1_18[i].line_edit_max.text()))
+                except Exception:
+                    print("Min, max trash!!!!")
+                    self.data_io_from_gui.min.append(0)
+                    self.data_io_from_gui.max.append(0)
+
+        self.data_io_from_gui.setAnalogUseBit()
+
+        for i in range(0, 5):
+            self.data_io_from_gui.Q_var.append(self.widget_Q_1_5[i].combo_var_out_digit.currentIndex())
+        for i in range(0, 2):
+            self.data_io_from_gui.T_var.append(self.widget_T_1_2[i].combo_var_out_digit.currentIndex())
+        print(self.data_io_from_gui.Q_var)
+        print(self.data_io_from_gui.T_var)
+
+        for i in range(0, 8):
+            type = self.widget_Uo_1_8[i].combo_io_output_type.currentIndex()
+            if type == 2:
+                self.data_io_from_gui.U_var.append(self.widget_Uo_1_8[i].combo_var_out_digit.currentIndex())
+            else:
+                self.data_io_from_gui.U_var.append(self.widget_Uo_1_8[i].combo_var_out_analog.currentIndex())
+            self.data_io_from_gui.U_type.append(type)
+            self.data_io_from_gui.U_period.append(0 if self.widget_Uo_1_8[i].line_edit_period.text() == '' else int(self.widget_Uo_1_8[i].line_edit_period.text()))
+
+
+        self.data_io_from_gui.setDigitUseBit()
+        self.data_io_from_gui.makeDataIOModbus()
+
+        print(self.data_io_from_gui.getDataModbus())
+        print("Save data!!!!")

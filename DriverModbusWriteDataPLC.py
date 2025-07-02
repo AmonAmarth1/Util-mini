@@ -47,7 +47,7 @@ class DriverModbusWriteDataPLC:
                     self.writeSingleData(data[i][0], data[i][1], data[i][2])
                 if (len(data[i]) == 2 and data[i][1] != Literal.reg_bin_digit):
                     self.writeSingleData(data[i][0], data[i][1])
-                sleep(0.005)
+                sleep(0.003)
 
     def sendArrayIO(self, data):
         try:

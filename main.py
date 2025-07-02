@@ -32,6 +32,8 @@ from DataFromPLC import DataFromPLC
 
 from WindowConfig import WindowConfig
 
+from data_from_gui.data_io_from_gui import Data_io_from_gui
+
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -104,6 +106,16 @@ class MyApp(QWidget):
         self.unload_button.clicked.connect(self.unload_function_file)
         layout.addWidget(self.unload_button)
 
+        self.qlabel_text1 = QLabel("Выбро источника для выгрузки данных в плк: ")
+
+        self.sourse_data1 = QComboBox(self)
+        self.sourse_data1.addItems(['Eplan', 'Окно конфигурации'])
+
+        layout_Hbox2 = QHBoxLayout()
+        layout_Hbox2.addWidget(self.qlabel_text1)
+        layout_Hbox2.addWidget(self.sourse_data1)
+        layout.addLayout(layout_Hbox2)
+
         self.unload_button_plc = QPushButton('Выгрузить данные в плк', self)
         self.unload_button_plc.clicked.connect(self.unload_function_plc)
         layout.addWidget(self.unload_button_plc)
@@ -139,6 +151,7 @@ class MyApp(QWidget):
 
         self.dataSaveFile = DataFileSave()
 
+
         self.window_config = None
         # тут вызывать функцию конфиг
         # config = твой клас конфига
@@ -154,6 +167,8 @@ class MyApp(QWidget):
             self.config.printDictionary()
             self.window_config = WindowConfig(self.config)
             self.output_text.append('Conf загружен.')
+
+        self.data_io_from_gui = Data_io_from_gui(self.config)
 
     def choose_file_specification(self):
         options = QFileDialog.Options()
@@ -295,30 +310,47 @@ class MyApp(QWidget):
             print(f"Произошло исключение: {e}")
 
     def unload_function_plc(self):
+        if self.sourse_data1.currentText() == 'Eplan':
+            try:
+                self.driverModbusWriter = DriverModbusWriteDataPLC(int(self.id_combo.currentText().replace("Id ", "")), self.port_combo.currentText(), int(self.baudrate_combo.currentText()), 8, self.parity_combo.currentText()[:1])
 
-        try:
-            self.driverModbusWriter = DriverModbusWriteDataPLC(int(self.id_combo.currentText().replace("Id ", "")), self.port_combo.currentText(), int(self.baudrate_combo.currentText()), 8, self.parity_combo.currentText()[:1])
+                self.driverModbusWriter.sendArrayIO(self.dataPLC.getDataModbus())
+                self.driverModbusWriter.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
+                self.driverModbusWriter.writeLong(self.dataPLC.reg_bit_analog_access, self.dataPLC.getBitAnalogAcess())
+                self.driverModbusWriter.sendCortage(self.controllerConverter.getDataForModbus())
+                self.driverModbusWriter.sendCortage(self.controllerHeat.getDataForModbus())
+                self.driverModbusWriter.sendCortage(self.contollerRecup.getDataForModbus())
+                self.driverModbusWriter.sendCortage(self.contollerDx.getDataForModbus())
+                self.driverModbusWriter.sendCortage(self.contollerHumidifier.getDataForModbus())
+                self.driverModbusWriter.sendCortage(self.controllerMixCamera.getDataForModbus())
+                self.driverModbusWriter.sendArrayIO(self.contollerModbusSensors.getDataForModbus())
 
-            self.driverModbusWriter.sendArrayIO(self.dataPLC.getDataModbus())
-            self.driverModbusWriter.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
-            self.driverModbusWriter.writeLong(self.dataPLC.reg_bit_analog_access, self.dataPLC.getBitAnalogAcess())
-            self.driverModbusWriter.sendCortage(self.controllerConverter.getDataForModbus())
-            self.driverModbusWriter.sendCortage(self.controllerHeat.getDataForModbus())
-            self.driverModbusWriter.sendCortage(self.contollerRecup.getDataForModbus())
-            self.driverModbusWriter.sendCortage(self.contollerDx.getDataForModbus())
-            self.driverModbusWriter.sendCortage(self.contollerHumidifier.getDataForModbus())
-            self.driverModbusWriter.sendCortage(self.controllerMixCamera.getDataForModbus())
-            self.driverModbusWriter.sendArrayIO(self.contollerModbusSensors.getDataForModbus())
-
-        except Exception:
-            print("Данные в плк не выгрузились, Ошибка Modbus!!!!")
-            self.output_text.append("Данные в плк не выгрузились, Ошибка Modbus!!!!")
-            self.driverModbusWriter.closePort()
+            except Exception:
+                print("Данные в плк не выгрузились, Ошибка Modbus!!!!")
+                self.output_text.append("Данные в плк не выгрузились, Ошибка Modbus!!!!")
+                self.driverModbusWriter.closePort()
+            else:
+                print("finish")
+                self.output_text.append('Данные выгружены...')
+                self.driverModbusWriter.closePort()
         else:
-            print("finish")
-            self.output_text.append('Данные выгружены...')
-            self.driverModbusWriter.closePort()
+            try:
+                self.driverModbusWriter = DriverModbusWriteDataPLC(int(self.id_combo.currentText().replace("Id ", "")),
+                                                                   self.port_combo.currentText(),
+                                                                   int(self.baudrate_combo.currentText()), 8,
+                                                                   self.parity_combo.currentText()[:1])
 
+                self.driverModbusWriter.sendArrayIO(self.window_config.data_io_from_gui.getDataModbus())
+
+
+            except Exception:
+                print("Данные в плк не выгрузились, Ошибка Modbus!!!!")
+                self.output_text.append("Данные в плк не выгрузились, Ошибка Modbus!!!!")
+                self.driverModbusWriter.closePort()
+            else:
+                print("finish")
+                self.output_text.append('Данные выгружены из окна конфигурации...')
+                self.driverModbusWriter.closePort()
         pass
 
     def open_config_window(self):
@@ -327,6 +359,8 @@ class MyApp(QWidget):
         self.window_config.setDataFromEplanConv(self.controllerConverter)
 
         self.window_config.setDataFromPLC(self.data_from_plc)
+
+        self.window_config.setDataIOFromGui(self.data_io_from_gui)
 
         self.window_config.show()
 

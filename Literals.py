@@ -20,6 +20,7 @@ class Literal:
 
     POSITION_REG_BIN_DIGIT = 3
     reg_bin_digit = 303
+    pwm_out = 290
 
     NEW_BIN_NUM_1 = DEFAULT_BIN_OUTPUT_DIGIT | BIT_0
     NEW_BIN_NUM_2 = DEFAULT_BIN_OUTPUT_DIGIT | BIT_1
@@ -51,6 +52,8 @@ class Literal:
        type_reg: 6 - WRITE SINGLE REGISTER, 5 - WRITE SINGLE COIL, 7 - Write long 4 byte
        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     '''
+    WRITE_LONG = 7
+
     type_reg_converter = {"input_converter_modbus_use": 5, "output_converter_modbus_use": 5, "input_count": 6, "output_count": 6, "input_type": 6, "output_type": 6, "input_type_reserve": 6, "output_type_reserve": 6, "input_adres_1": 6,"output_adres_1": 6}
 
 
