@@ -33,6 +33,13 @@ from DataFromPLC import DataFromPLC
 from WindowConfig import WindowConfig
 
 from data_from_gui.data_io_from_gui import Data_io_from_gui
+from data_from_gui.data_vent_from_gui import Data_vent_from_gui
+from data_from_gui.data_recup_from_gui import Data_recup_from_gui
+from  data_from_gui.data_heat_from_gui import Data_heat_from_gui
+from  data_from_gui.data_dx_from_gui import Data_dx_from_gui
+from data_from_gui.data_hum_from_gui import Data_hum_from_gui
+from data_from_gui.data_mix_from_gui import Data_mix_from_gui
+from  data_from_gui.data_sensors_from_gui import Data_sensors_from_gui
 
 class MyApp(QWidget):
     def __init__(self):
@@ -116,7 +123,7 @@ class MyApp(QWidget):
         layout_Hbox2.addWidget(self.sourse_data1)
         layout.addLayout(layout_Hbox2)
 
-        self.unload_button_plc = QPushButton('Выгрузить данные в плк', self)
+        self.unload_button_plc = QPushButton('Загрузить данные в плк', self)
         self.unload_button_plc.clicked.connect(self.unload_function_plc)
         layout.addWidget(self.unload_button_plc)
 
@@ -169,6 +176,21 @@ class MyApp(QWidget):
             self.output_text.append('Conf загружен.')
 
         self.data_io_from_gui = Data_io_from_gui(self.config)
+        self.data_vent_from_gui = Data_vent_from_gui(self.config)
+        self.data_recup_from_gui = Data_recup_from_gui(self.config)
+        self.data_heat_from_gui = Data_heat_from_gui(self.config)
+        self.data_dx_from_gui = Data_dx_from_gui(self.config)
+        self.data_hum_from_gui = Data_hum_from_gui(self.config)
+        self.data_mix_from_gui = Data_mix_from_gui(self.config)
+        self.data_sensors_from_gui = Data_sensors_from_gui(self.config)
+
+
+        # for c in self.id_combo.itemText(range(0, self.id_combo.count())):
+        #     print(c)
+
+        for i in range(0, self.id_combo.count()):
+            if i > 5:
+                self.id_combo.model().item(i).setEnabled(False)
 
     def choose_file_specification(self):
         options = QFileDialog.Options()
@@ -314,7 +336,7 @@ class MyApp(QWidget):
             try:
                 self.driverModbusWriter = DriverModbusWriteDataPLC(int(self.id_combo.currentText().replace("Id ", "")), self.port_combo.currentText(), int(self.baudrate_combo.currentText()), 8, self.parity_combo.currentText()[:1])
 
-                self.driverModbusWriter.sendArrayIO(self.dataPLC.getDataModbus())
+                self.driverModbusWriter.sendArray(self.dataPLC.getDataModbus())
                 self.driverModbusWriter.writeLong(self.controllerIO.getRegBinDigit(), self.dataPLC.getBinDigital())
                 self.driverModbusWriter.writeLong(self.dataPLC.reg_bit_analog_access, self.dataPLC.getBitAnalogAcess())
                 self.driverModbusWriter.sendCortage(self.controllerConverter.getDataForModbus())
@@ -323,7 +345,7 @@ class MyApp(QWidget):
                 self.driverModbusWriter.sendCortage(self.contollerDx.getDataForModbus())
                 self.driverModbusWriter.sendCortage(self.contollerHumidifier.getDataForModbus())
                 self.driverModbusWriter.sendCortage(self.controllerMixCamera.getDataForModbus())
-                self.driverModbusWriter.sendArrayIO(self.contollerModbusSensors.getDataForModbus())
+                self.driverModbusWriter.sendArray(self.contollerModbusSensors.getDataForModbus())
 
             except Exception:
                 print("Данные в плк не выгрузились, Ошибка Modbus!!!!")
@@ -340,8 +362,14 @@ class MyApp(QWidget):
                                                                    int(self.baudrate_combo.currentText()), 8,
                                                                    self.parity_combo.currentText()[:1])
 
-                self.driverModbusWriter.sendArrayIO(self.window_config.data_io_from_gui.getDataModbus())
-
+                self.driverModbusWriter.sendArray(self.window_config.data_io_from_gui.getDataModbus())
+                self.driverModbusWriter.sendArray(self.window_config.data_vent_from_gui.getDataModbus())
+                self.driverModbusWriter.sendArray(self.window_config.data_recup_from_gui.getDataModbus())
+                self.driverModbusWriter.sendArray(self.window_config.data_heat_from_gui.getDataModbus())
+                self.driverModbusWriter.sendArray(self.window_config.data_dx_from_gui.getDataModbus())
+                self.driverModbusWriter.sendCortage(self.window_config.data_hum_from_gui.getDataModbus())
+                self.driverModbusWriter.sendCortage(self.window_config.data_mix_from_gui.getDataModbus())
+                self.driverModbusWriter.sendArray(self.window_config.data_sensors_from_gui.getDataModbus())
 
             except Exception:
                 print("Данные в плк не выгрузились, Ошибка Modbus!!!!")
@@ -361,6 +389,13 @@ class MyApp(QWidget):
         self.window_config.setDataFromPLC(self.data_from_plc)
 
         self.window_config.setDataIOFromGui(self.data_io_from_gui)
+        self.window_config.setDataVentFromGui(self.data_vent_from_gui)
+        self.window_config.setDataRecupFromGui(self.data_recup_from_gui)
+        self.window_config.setDataHeatFromGui(self.data_heat_from_gui)
+        self.window_config.setDataDxFromGui(self.data_dx_from_gui)
+        self.window_config.setDataHumFromGui(self.data_hum_from_gui)
+        self.window_config.setDataMixFromGui(self.data_mix_from_gui)
+        self.window_config.setDataSensorsFromGui(self.data_sensors_from_gui)
 
         self.window_config.show()
 

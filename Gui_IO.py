@@ -21,6 +21,9 @@ class Gui_IO(QWidget):
         self.input_output = input_output
         self.type = 0
 
+        self.prev_digit = 0
+        self.prev_analog = 0
+
         self.initUI()
     def initUI(self):
 
@@ -49,10 +52,10 @@ class Gui_IO(QWidget):
         if (name == "Ui1" or name == "Ui2" or name == "Ui3" or name == "Ui4" or name == "Ui5" or name == "Ui6"):
             self.line_edit_min = QLineEdit()
             self.line_edit_max = QLineEdit()
-            self.combo_io_input_type.addItems(list(self.type_io_input.values()))
+            self.combo_io_input_type.addItem(self.type_io_input[0])
+            self.combo_io_input_type.addItem(self.type_io_input[1])
+            self.combo_io_input_type.addItem(self.type_io_input[2])
         else:
-            self.combo_io_input_type.addItem('--')
-            self.combo_io_input_type.addItem('--')
             self.combo_io_input_type.addItem(self.type_io_input[2])
             self.combo_io_input_type.addItem(self.type_io_input[3])
             self.combo_io_input_type.setCurrentIndex(2)

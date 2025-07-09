@@ -20,6 +20,8 @@ class Gui_sensors(QWidget):
         self.config = config
         self.var_sensors = list(config.Ai.keys())
 
+        self.prev_i = 0
+
         self.initUI()
 
     def initUI(self):
@@ -30,7 +32,7 @@ class Gui_sensors(QWidget):
 
         self.layout_id = QHBoxLayout()
         self.id_name = QLabel("ID:")
-        self.id_edit = QLineEdit('1')
+        self.id_edit = QLineEdit('0')
         self.layout_id.addWidget(self.id_name)
         self.layout_id.addWidget(self.id_edit)
         self.main_layout.addLayout(self.layout_id)

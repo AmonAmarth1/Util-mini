@@ -1,3 +1,7 @@
+#Кто я и нахер нужен
+# с какими данными я связан
+# особенности (спорные момента кода, оставленный себе гемсорой)
+
 import sys
 import json
 import os
@@ -8,6 +12,7 @@ from PyQt5.QtWidgets import (
 )
 
 from Test_deepseek import CollapsibleWidget
+from Literals import Literal
 
 from Config import Config
 from DataFromEplan import DataFromEplan
@@ -53,6 +58,7 @@ class WindowConfig(QWidget):
 
         self.data_from_plc = data_from_plc
 
+
     def initUI(self):
         self.setWindowTitle('Config window')
         self.setGeometry(300, 100, 600, 500)
@@ -84,6 +90,8 @@ class WindowConfig(QWidget):
         for i in range(0, 18):
             self.widget_Ui_1_18.append(Gui_IO(f"Ui{i + 1}", {i}, self.config, "input"))
             self.layout_In.addWidget(self.widget_Ui_1_18[i], int(i / 6), int((i % 6)))
+            self.widget_Ui_1_18[i].combo_var_in_digit.currentIndexChanged.connect(self.digitChange)
+            self.widget_Ui_1_18[i].combo_var_in_analog.currentIndexChanged.connect(self.analogChange)
 
         for i in range(0, 8):
             self.widget_Uo_1_8.append(Gui_IO(f"Uo{i + 1}", {i}, self.config, "output"))
@@ -117,7 +125,7 @@ class WindowConfig(QWidget):
         self.layout_heat.addWidget(self.dx)
         self.layout_heat.addWidget(self.hum)
         self.layout_heat.addWidget(self.mix)
-        self.layout.addWidget(CollapsibleWidget(self.layout_heat, 0, 0, 0, 0, "Конфигурация нагревателей, охладителя, камеры смешения"))
+        self.layout.addWidget(CollapsibleWidget(self.layout_heat, 0, 0, 0, 0, "Конфигурация нагревателей, охладителя, увлажнителя и камеры смешения"))
 
         self.layout_sensors = QGridLayout()
         self.widget_sensors_10 = []
@@ -125,6 +133,7 @@ class WindowConfig(QWidget):
         for i in range(0, 10):
             self.widget_sensors_10.append(Gui_sensors(self.config, i + 1))
             self.layout_sensors.addWidget(self.widget_sensors_10[i], int(i / 5), int((i % 5)))
+            self.widget_sensors_10[i].var_combo.currentIndexChanged.connect(self.sensorChange)
         self.layout.addWidget(
             CollapsibleWidget(self.layout_sensors, 0, 0, 0, 0, "Конфигурация Modbus датчиков"))
 
@@ -142,7 +151,73 @@ class WindowConfig(QWidget):
         self.main_layout.addWidget(self.main_widget)
         self.setLayout(self.main_layout)
 
+    def digitChange(self, i):
+        num_input_change = 0
+        prev_i = 0
+        for j in range(0, Literal.IO_LENGTH):
+            if i == self.widget_Ui_1_18[j].combo_var_in_digit.currentIndex():
+                num_input_change = j
+                prev_i = self.widget_Ui_1_18[j].prev_digit
+                self.widget_Ui_1_18[j].prev_digit = i
+        self.setBlockDigit(i, num_input_change)
+        self.resetBlockDigit(prev_i)
 
+    def setBlockDigit(self, i, num_input_change):
+        for j in range(0, Literal.IO_LENGTH):
+            if(j != num_input_change):
+                self.widget_Ui_1_18[j].combo_var_in_digit.model().item(i).setEnabled(False)
+
+    def resetBlockDigit(self, prev_i):
+        for j in range(0, Literal.IO_LENGTH):
+            self.widget_Ui_1_18[j].combo_var_in_digit.model().item(prev_i).setEnabled(True)
+
+    def analogChange(self, i):
+        num_input_change = 0
+        prev_i = 0
+        for j in range(0, Literal.IO_LENGTH):
+            if i == self.widget_Ui_1_18[j].combo_var_in_analog.currentIndex():
+                num_input_change = j
+                prev_i = self.widget_Ui_1_18[j].prev_analog
+                self.widget_Ui_1_18[j].prev_analog = i
+        self.setBlockAnalog(i, num_input_change)
+        self.resetBlockAnalog(prev_i)
+
+    def setBlockAnalog(self, i, num_input_change):
+        for j in range(0, Literal.IO_LENGTH):
+            if(j != num_input_change):
+                self.widget_Ui_1_18[j].combo_var_in_analog.model().item(i).setEnabled(False)
+        for j in range(0, len(self.widget_sensors_10)):
+                self.widget_sensors_10[j].var_combo.model().item(i).setEnabled(False)
+
+    def resetBlockAnalog(self, prev_i):
+        for j in range(0, Literal.IO_LENGTH):
+            self.widget_Ui_1_18[j].combo_var_in_analog.model().item(prev_i).setEnabled(True)
+        for j in range(0, len(self.widget_sensors_10)):
+            self.widget_sensors_10[j].var_combo.model().item(prev_i).setEnabled(False)
+
+    def sensorChange(self, i):
+        num_input_change = 0
+        prev_i = 0
+        for j in range(0, len(self.widget_sensors_10)):
+            if i == self.widget_sensors_10[j].var_combo.currentIndex():
+                num_input_change = j
+                prev_i = self.widget_sensors_10[j].prev_i
+                self.widget_sensors_10[j].prev_i = i
+        self.setBlockSens(i, num_input_change)
+        self.resetBlockSens(prev_i)
+
+    def setBlockSens(self, i, num_input_change):
+        for j in range(0, len(self.widget_sensors_10)):
+            if(j != num_input_change):
+                self.widget_sensors_10[j].var_combo.model().item(i).setEnabled(False)
+        for j in range(0, Literal.IO_LENGTH):
+                self.widget_Ui_1_18[j].combo_var_in_analog.model().item(i).setEnabled(False)
+
+    def resetBlockSens(self, prev_i):
+        for j in range(0, Literal.IO_LENGTH):
+            self.widget_Ui_1_18[j].combo_var_in_analog.model().item(prev_i).setEnabled(True)
+        for j in range(0, len(self.widget_sensors_10)):
+            self.widget_sensors_10[j].var_combo.model().item(prev_i).setEnabled(False)
 
     def initIO(self, layout):
         pass
@@ -177,6 +252,27 @@ class WindowConfig(QWidget):
     def setDataIOFromGui(self, data_io_from_gui):
         self.data_io_from_gui = data_io_from_gui
 
+    def setDataVentFromGui(self, data_vent_from_gui):
+        self.data_vent_from_gui = data_vent_from_gui
+
+    def setDataRecupFromGui(self, data_recup_from_gui):
+        self.data_recup_from_gui = data_recup_from_gui
+
+    def setDataHeatFromGui(self, data_heat_from_gui):
+        self.data_heat_from_gui = data_heat_from_gui
+
+    def setDataDxFromGui(self, data_dx_from_gui):
+        self.data_dx_from_gui = data_dx_from_gui
+
+    def setDataHumFromGui(self, data_hum_from_gui):
+        self.data_hum_from_gui = data_hum_from_gui
+
+    def setDataMixFromGui(self, data_mix_from_gui):
+        self.data_mix_from_gui = data_mix_from_gui
+
+    def setDataSensorsFromGui(self, data_sensors_from_gui):
+        self.data_sensors_from_gui = data_sensors_from_gui
+
     def load_function(self):
 
         if self.data_sourse.currentText() == 'eplan':
@@ -189,15 +285,25 @@ class WindowConfig(QWidget):
                     Ui = self.eplan_IO.data_io[i].find("UI")
                     if Ui != -1:
                         index = int(self.eplan_IO.data_io[i][2:])
-                        type =  self.eplan_IO.data_io_for_modbus[i][1][0]
+                        type = self.eplan_IO.data_io_for_modbus[i][1][0]
 
                         if type == 2:
                             self.widget_Ui_1_18[index - 1].combo_var_in_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
-                            self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][1][0])
+                            self.widget_Ui_1_18[index - 1].prev_digit = self.eplan_IO.data_io_for_modbus[i][0][0]
+                            if index < 7:
+                                self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][1][0])
+                            else:
+                                self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(
+                                    self.eplan_IO.data_io_for_modbus[i][1][0] - 2)
 
                         else:
                             self.widget_Ui_1_18[index - 1].combo_var_in_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
-                            self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][1][0])
+                            self.widget_Ui_1_18[index - 1].prev_analog = self.eplan_IO.data_io_for_modbus[i][0][0]
+                            if index < 7:
+                                self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][1][0])
+                            else:
+                                self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(
+                                    self.eplan_IO.data_io_for_modbus[i][1][0] - 2)
 
                         if self.eplan_IO.data_io_for_modbus[i][2][0] != None:
                             self.widget_Ui_1_18[index - 1].combo_type_io_input_product.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][2][0])
@@ -278,9 +384,14 @@ class WindowConfig(QWidget):
 
                     if type == 2:
                         self.widget_Ui_1_18[i].combo_var_in_digit.setCurrentIndex(self.data_from_plc.Ui_value[i][0])
+                        self.widget_Ui_1_18[i].prev_digit = self.data_from_plc.Ui_value[i][0]
                     else:
                         self.widget_Ui_1_18[i].combo_var_in_analog.setCurrentIndex(self.data_from_plc.Ui_value[i][0])
-                    self.widget_Ui_1_18[i].combo_io_input_type.setCurrentIndex(type)
+                        self.widget_Ui_1_18[i].prev_analog = self.data_from_plc.Ui_value[i][0]
+                    if i < 6:
+                        self.widget_Ui_1_18[i].combo_io_input_type.setCurrentIndex(type)
+                    else:
+                        self.widget_Ui_1_18[i].combo_io_input_type.setCurrentIndex(type - 2)
                     self.widget_Ui_1_18[i].combo_type_io_input_product.setCurrentIndex(self.data_from_plc.Ui_value[i][2])
 
                     if type < 2:
@@ -290,10 +401,10 @@ class WindowConfig(QWidget):
                 for i in range(0, len(self.data_from_plc.Uo_value)):
                     type = self.data_from_plc.Uo_value[i][1]
 
-                    if type == 2:
+                    if type == 17:
                         self.widget_Uo_1_8[i].combo_var_out_digit.setCurrentIndex(self.data_from_plc.Uo_value[i][0])
                         self.widget_Uo_1_8[i].combo_io_output_type.setCurrentIndex(2)
-                    elif type == 0:
+                    elif type == 18:
                         self.widget_Uo_1_8[i].combo_var_out_analog.setCurrentIndex(self.data_from_plc.Uo_value[i][0])
                         self.widget_Uo_1_8[i].combo_io_output_type.setCurrentIndex(0)
                         self.widget_Uo_1_8[i].line_edit_period.setText(str(self.data_from_plc.Uo_value[i][2]))
@@ -348,14 +459,17 @@ class WindowConfig(QWidget):
     def save_function(self):
         self.data_io_from_gui.clear()
         for i in range(0, 18):
-            self.data_io_from_gui.type.append(self.widget_Ui_1_18[i].combo_io_input_type.currentIndex())
-            type = self.widget_Ui_1_18[i].combo_io_input_type.currentIndex()
+            if i < 6:
+                type = self.widget_Ui_1_18[i].combo_io_input_type.currentIndex()
+            else:
+                type = self.widget_Ui_1_18[i].combo_io_input_type.currentIndex() + 2
             if type != 2:
                 self.data_io_from_gui.var.append(self.widget_Ui_1_18[i].combo_var_in_analog.currentIndex())
             else:
                 self.data_io_from_gui.var.append(self.widget_Ui_1_18[i].combo_var_in_digit.currentIndex())
             self.data_io_from_gui.method.append(self.widget_Ui_1_18[i].combo_type_io_input_product.currentIndex())
             if (i < 6):
+                self.data_io_from_gui.type.append(2 if self.widget_Ui_1_18[i].combo_io_input_type.currentIndex() == -1 else self.widget_Ui_1_18[i].combo_io_input_type.currentIndex())
                 try:
                     self.data_io_from_gui.min.append(0 if self.widget_Ui_1_18[i].line_edit_min.text() == '' else int(self.widget_Ui_1_18[i].line_edit_min.text()))
                     self.data_io_from_gui.max.append(0 if self.widget_Ui_1_18[i].line_edit_max.text() == '' else int(self.widget_Ui_1_18[i].line_edit_max.text()))
@@ -363,6 +477,8 @@ class WindowConfig(QWidget):
                     print("Min, max trash!!!!")
                     self.data_io_from_gui.min.append(0)
                     self.data_io_from_gui.max.append(0)
+            else:
+                self.data_io_from_gui.type.append(2 if self.widget_Ui_1_18[i].combo_io_input_type.currentIndex() == -1 else self.widget_Ui_1_18[i].combo_io_input_type.currentIndex() + 2)
 
         self.data_io_from_gui.setAnalogUseBit()
 
@@ -375,11 +491,17 @@ class WindowConfig(QWidget):
 
         for i in range(0, 8):
             type = self.widget_Uo_1_8[i].combo_io_output_type.currentIndex()
+            type2 = 0
             if type == 2:
+                type2 = 17
                 self.data_io_from_gui.U_var.append(self.widget_Uo_1_8[i].combo_var_out_digit.currentIndex())
-            else:
+            elif type == 1:
+                type2 = 19
                 self.data_io_from_gui.U_var.append(self.widget_Uo_1_8[i].combo_var_out_analog.currentIndex())
-            self.data_io_from_gui.U_type.append(type)
+            else:
+                type2 = 18
+                self.data_io_from_gui.U_var.append(self.widget_Uo_1_8[i].combo_var_out_analog.currentIndex())
+            self.data_io_from_gui.U_type.append(type2)
             self.data_io_from_gui.U_period.append(0 if self.widget_Uo_1_8[i].line_edit_period.text() == '' else int(self.widget_Uo_1_8[i].line_edit_period.text()))
 
 
@@ -387,4 +509,78 @@ class WindowConfig(QWidget):
         self.data_io_from_gui.makeDataIOModbus()
 
         print(self.data_io_from_gui.getDataModbus())
+
+        self.data_vent_from_gui.vent_in_num = int(self.converter.in_num_edit.text())
+        self.data_vent_from_gui.vent_out_num = int(self.converter.out_num_edit.text())
+
+        self.data_vent_from_gui.vent_in_modbus_use = self.converter.combo_in_modbus_use.currentIndex()
+        self.data_vent_from_gui.vent_out_modbus_use= self.converter.combo_out_modbus_use.currentIndex()
+
+        self.data_vent_from_gui.vent_in_type = self.converter.combo_in_type.currentIndex()
+        self.data_vent_from_gui.vent_out_type = self.converter.combo_out_type.currentIndex()
+
+        self.data_vent_from_gui.vent_in_id = int(self.converter.edit_in_id.text())
+        self.data_vent_from_gui.vent_out_id = int(self.converter.edit_out_id.text())
+
+        self.data_vent_from_gui.vent_in_reserve = self.converter.combo_in_reserve.currentIndex()
+        self.data_vent_from_gui.vent_out_reserve = self.converter.combo_out_reserve.currentIndex()
+
+        self.data_vent_from_gui.makeDataModebus()
+
+        print(self.data_vent_from_gui.modbus_data)
+
+        self.data_recup_from_gui.recup_use = self.recup.recup_use_combo.currentIndex()
+        self.data_recup_from_gui.type = self.recup.recup_type_combo.currentIndex()
+        self.data_recup_from_gui.modbus_use = self.recup.recup_modbus_use_combo.currentIndex()
+        self.data_recup_from_gui.id = int(self.recup.recup_id_edit.text())
+        self.data_recup_from_gui.recup_rpm = int(self.recup.recup_rpm_edit.text())
+        self.data_recup_from_gui.type_conv = self.recup.recup_conv_type_combo.currentIndex()
+        self.data_recup_from_gui.makeDataModbus()
+
+        print(self.data_recup_from_gui.getDataModbus())
+
+        self.data_heat_from_gui.heat1_type = self.heat.heat1_type_combo.currentIndex()
+        self.data_heat_from_gui.heat1_reserve_pump = self.heat.heat1_reserve_pump_combo.currentIndex()
+        self.data_heat_from_gui.heat2_use = self.heat.heat2_use_combo.currentIndex()
+        self.data_heat_from_gui.heat2_type = self.heat.heat2_type_combo.currentIndex()
+        self.data_heat_from_gui.heat2_reserve_pump = self.heat.heat2_reserve_pump_combo.currentIndex()
+        self.data_heat_from_gui.makeDataModbus()
+
+        print(self.data_heat_from_gui.getDataModbus())
+
+        self.data_dx_from_gui.dx_use = self.dx.dx_use_combo.currentIndex()
+        self.data_dx_from_gui.dx_type = self.dx.type_dx_combo.currentIndex()
+        self.data_dx_from_gui.dx_heat_use = self.dx.dx_heat_combo.currentIndex()
+        self.data_dx_from_gui.makeDataModbus()
+
+        print(self.data_dx_from_gui.getDataModbus())
+
+        self.data_hum_from_gui.hum_use = self.hum.hum_use_combo.currentIndex()
+        self.data_hum_from_gui.makeDataModbus()
+
+        print(self.data_hum_from_gui.getDataModbus())
+
+        self.data_mix_from_gui.mix_use = self.mix.mix_use_combo.currentIndex()
+        self.data_mix_from_gui.makeDataModbus()
+
+        print(self.data_mix_from_gui.getDataModbus())
+
+        self.data_sensors_from_gui.clear()
+
+        self.data_sensors_from_gui.analog_bit_access_io = self.data_io_from_gui.analog_bit_access
+
+        for i in range(0, len(self.widget_sensors_10)):
+            self.data_sensors_from_gui.id.append(int(self.widget_sensors_10[i].id_edit.text()))
+            self.data_sensors_from_gui.type.append(self.widget_sensors_10[i].type_combo.currentIndex())
+            self.data_sensors_from_gui.var.append(self.widget_sensors_10[i].var_combo.currentIndex())
+
+        print("sensors")
+        print(self.data_sensors_from_gui.id)
+        print(self.data_sensors_from_gui.type)
+        print(self.data_sensors_from_gui.var)
+
+        self.data_sensors_from_gui.makeDataModbus()
+
+        print(self.data_sensors_from_gui.getDataModbus())
+
         print("Save data!!!!")

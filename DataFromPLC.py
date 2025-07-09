@@ -130,7 +130,7 @@ class DataFromPLC:
                 self.data_io_var.append(self.Ui_value[i][0])
         for i in range(0, len(self.Uo_value)):
             self.data_io_type.append(self.Uo_value[i][1])
-            self.data_io_type_human.append(Literal.types_io_output[self.Uo_value[i][1]])
+            self.data_io_type_human.append(Literal.types_io_output_2[self.Uo_value[i][1]])
             self.data_io.append(f"Uo{i+1}")
             if (self.is_bit_set(self.analog_dig_bit, i)):
                 self.data_io_var_human.append(self.get_key(self.Do, self.Uo_value[i][0]))

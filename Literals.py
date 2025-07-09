@@ -22,6 +22,8 @@ class Literal:
     reg_bin_digit = 303
     pwm_out = 290
 
+    IO_LENGTH = 18
+
     NEW_BIN_NUM_1 = DEFAULT_BIN_OUTPUT_DIGIT | BIT_0
     NEW_BIN_NUM_2 = DEFAULT_BIN_OUTPUT_DIGIT | BIT_1
     NEW_BIN_NUM_3 = DEFAULT_BIN_OUTPUT_DIGIT | BIT_2
@@ -45,7 +47,7 @@ class Literal:
     output_vent = "2U"
     types_converter = {"INVT": 0, "другой": 1, "VCI": 2, "LCI": 3, "Danfoss": 4, "Canroon": 5}
     types_converter_num = {0: "INVT", 1: "другой", 2: "VCI", 3: "LCI", 4: "Danfoss", 5: "Canroon"}
-    register_converter = {"input_converter_modbus_use": 8, "output_converter_modbus_use": 7, "input_count": 51, "output_count": 60, "input_type": 53, "output_type": 52, "input_type_reserve": 1686, "output_type_reserve": 1655, "input_adres_1": 55,"output_adres_1": 54}
+    register_converter = {"input_converter_modbus_use": 8, "output_converter_modbus_use": 7, "input_count": 51, "output_count": 60, "input_type": 53, "output_type": 52, "input_type_reserve": 1686, "output_type_reserve": 1655, "input_adres_1": 55, "output_adres_1": 54}
     reserve_converter = {0: "нет", 1: "Группа", 2: "Горячий", 3: "Каскадный"}
     '''
        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
