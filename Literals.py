@@ -77,8 +77,9 @@ class Literal:
     type_reg_dx = {"use_dx": 5, "config_dx": 6, "heat_dx": 5}
 
     humidifier_type = {0: "TH1"}
-    reg_humidifier = {"humidifier_use": 11}
-    type_reg_humidifier = {"humidifier_use": 5}
+    reg_humidifier = {"humidifier_use": 11, "drainage_use": 70}
+    type_reg_humidifier = {"humidifier_use": 5, "drainage_use": 5}
+
 
     mix_camera = {0: "4Y1"}
     reg_mix_camera = {"mix_camera_use": 21}

@@ -5,6 +5,7 @@ class Data_hum_from_gui:
         self.conf = config
 
         self.hum_use = 0
+        self.drainage_use = 0
 
         self.reg = Literal.reg_humidifier
         self.reg_type = Literal.type_reg_humidifier
@@ -17,7 +18,7 @@ class Data_hum_from_gui:
     def makeDataModbus(self):
         self.clear()
 
-        self.modbus_data = ((self.hum_use, self.reg["humidifier_use"], self.reg_type["humidifier_use"]), ())
+        self.modbus_data = ((self.hum_use, self.reg["humidifier_use"], self.reg_type["humidifier_use"]), (self.drainage_use, self.reg["drainage_use"], self.reg_type["drainage_use"]))
 
         pass
 

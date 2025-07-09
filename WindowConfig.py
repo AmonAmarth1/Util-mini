@@ -448,6 +448,7 @@ class WindowConfig(QWidget):
                 self.dx.dx_heat_combo.setCurrentIndex(self.data_from_plc.dx_data[2])
 
                 self.hum.hum_use_combo.setCurrentIndex(self.data_from_plc.humidifier_data[0])
+                self.hum.drainage_use_combo.setCurrentIndex(self.data_from_plc.humidifier_data[1])
 
                 self.mix.mix_use_combo.setCurrentIndex(self.data_from_plc.mix_camera_data[0])
 
@@ -556,6 +557,7 @@ class WindowConfig(QWidget):
         print(self.data_dx_from_gui.getDataModbus())
 
         self.data_hum_from_gui.hum_use = self.hum.hum_use_combo.currentIndex()
+        self.data_hum_from_gui.drainage_use = self.hum.drainage_use_combo.currentIndex()
         self.data_hum_from_gui.makeDataModbus()
 
         print(self.data_hum_from_gui.getDataModbus())
