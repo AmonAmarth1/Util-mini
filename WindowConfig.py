@@ -157,13 +157,24 @@ class WindowConfig(QWidget):
     def digitChange(self, i):
         num_input_change = 0
         prev_i = 0
+        prev_i_save = 0
+        use_set = False
+        use_reset = False
         for j in range(0, Literal.IO_LENGTH):
             if i == self.widget_Ui_1_18[j].combo_var_in_digit.currentIndex() and i != 0:
-                num_input_change = j
-                prev_i = self.widget_Ui_1_18[j].prev_digit
+                use_set = True
                 self.widget_Ui_1_18[j].prev_digit = i
-        self.setBlockDigit(i, num_input_change)
-        self.resetBlockDigit(prev_i)
+                num_input_change = j
+            elif i == self.widget_Ui_1_18[j].combo_var_in_digit.currentIndex() and i == 0:
+                prev_i = self.widget_Ui_1_18[j].prev_digit
+                if prev_i != 0:
+                    use_reset = True
+                    prev_i_save = prev_i
+                    self.widget_Ui_1_18[j].prev_digit = i
+        if use_set == True:
+            self.setBlockDigit(i, num_input_change)
+        if use_reset == True:
+            self.resetBlockDigit(prev_i_save)
 
     def setBlockDigit(self, i, num_input_change):
         for j in range(0, Literal.IO_LENGTH):
@@ -177,13 +188,24 @@ class WindowConfig(QWidget):
     def analogChange(self, i):
         num_input_change = 0
         prev_i = 0
+        prev_i_save = 0
+        use_set = False
+        use_reset = False
         for j in range(0, Literal.IO_LENGTH):
             if i == self.widget_Ui_1_18[j].combo_var_in_analog.currentIndex() and i != 0:
                 num_input_change = j
-                prev_i = self.widget_Ui_1_18[j].prev_analog
+                use_set = True
                 self.widget_Ui_1_18[j].prev_analog = i
-        self.setBlockAnalog(i, num_input_change)
-        self.resetBlockAnalog(prev_i)
+            elif i == self.widget_Ui_1_18[j].combo_var_in_analog.currentIndex() and i == 0:
+                prev_i = self.widget_Ui_1_18[j].prev_analog
+                if prev_i != 0:
+                    use_reset = True
+                    prev_i_save = prev_i
+                    self.widget_Ui_1_18[j].prev_analog = i
+        if use_set == True:
+            self.setBlockAnalog(i, num_input_change)
+        if use_reset == True:
+            self.resetBlockAnalog(prev_i_save)
 
     def setBlockAnalog(self, i, num_input_change):
         for j in range(0, Literal.IO_LENGTH):
@@ -196,18 +218,29 @@ class WindowConfig(QWidget):
         for j in range(0, Literal.IO_LENGTH):
             self.widget_Ui_1_18[j].combo_var_in_analog.model().item(prev_i).setEnabled(True)
         for j in range(0, len(self.widget_sensors_10)):
-            self.widget_sensors_10[j].var_combo.model().item(prev_i).setEnabled(False)
+            self.widget_sensors_10[j].var_combo.model().item(prev_i).setEnabled(True)
 
     def sensorChange(self, i):
         num_input_change = 0
         prev_i = 0
+        prev_i_save = 0
+        use_set = False
+        use_reset = False
         for j in range(0, len(self.widget_sensors_10)):
             if i == self.widget_sensors_10[j].var_combo.currentIndex() and i != 0:
                 num_input_change = j
-                prev_i = self.widget_sensors_10[j].prev_i
+                use_set = True
                 self.widget_sensors_10[j].prev_i = i
-        self.setBlockSens(i, num_input_change)
-        self.resetBlockSens(prev_i)
+            elif i == self.widget_sensors_10[j].var_combo.currentIndex() and i == 0:
+                prev_i = self.widget_sensors_10[j].prev_i
+                if prev_i != 0:
+                    use_reset = True
+                    prev_i_save = prev_i
+                    self.widget_sensors_10[j].prev_i = i
+        if use_set == True:
+            self.setBlockSens(i, num_input_change)
+        if use_reset == True:
+            self.resetBlockSens(prev_i_save)
 
     def setBlockSens(self, i, num_input_change):
         for j in range(0, len(self.widget_sensors_10)):
@@ -220,7 +253,7 @@ class WindowConfig(QWidget):
         for j in range(0, Literal.IO_LENGTH):
             self.widget_Ui_1_18[j].combo_var_in_analog.model().item(prev_i).setEnabled(True)
         for j in range(0, len(self.widget_sensors_10)):
-            self.widget_sensors_10[j].var_combo.model().item(prev_i).setEnabled(False)
+            self.widget_sensors_10[j].var_combo.model().item(prev_i).setEnabled(True)
 
     def initIO(self, layout):
         pass
