@@ -31,8 +31,8 @@ class Data_sensors_from_gui:
             if self.id[i] != 0:
                 if self.var[i] != 0:
                     self.sensors_use = 1
-                    self.analog_bit_access = self.analog_bit_access | (pow(2, self.var[i]))
-                    self.sensors_use_bit = self.sensors_use_bit | (pow(2, self.var[i]))
+                    self.analog_bit_access = self.analog_bit_access | (1 << self.var[i])
+                    self.sensors_use_bit = self.sensors_use_bit | (1 << self.var[i])
         self.analog_bit_access = self.analog_bit_access | self.analog_bit_access_io
         print(f'Analog bit use: {self.analog_bit_access}!')
 

@@ -45,15 +45,15 @@ class Data_io_from_gui:
         for i in range(0, len(self.var)):
             if self.type[i] != 2:
                 if self.var[i] != 0:
-                    self.analog_bit_access = self.analog_bit_access | (pow(2, self.var[i]))
+                    self.analog_bit_access = self.analog_bit_access | (1 << self.var[i])
         print(f'Analog bit use: {self.analog_bit_access}!')
 
     def setDigitUseBit(self):
         for i in range(0, 8):
-            if self.U_type[i] == 2:
-                self.digit_bit = self.digit_bit | (pow(2, i))
-            if self.U_type[i] == 1:
-                self.pwm_bit = self.pwm_bit | (pow(2, i))
+            if self.U_type[i] == 17:
+                self.digit_bit = self.digit_bit | (1 << i)
+            if self.U_type[i] == 18 and self.U_period[i] != 0:
+                self.pwm_bit = self.pwm_bit | (1 << i)
 
     def makeDataIOModbus(self):
         for i in range(0, 18):
