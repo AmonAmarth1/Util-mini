@@ -326,10 +326,11 @@ class WindowConfig(QWidget):
 
                 for i in range(0, len(self.eplan_IO.data_io)):
 
-                    Ui = self.eplan_IO.data_io[i].find("UI")
-                    if Ui != -1:
-                        index = int(self.eplan_IO.data_io[i][2:])
-                        try:
+                    try:
+                        Ui = self.eplan_IO.data_io[i].find("UI")
+                        if Ui != -1:
+                            index = int(self.eplan_IO.data_io[i][2:])
+
                             type = self.eplan_IO.data_io_for_modbus[i][1][0]
 
                             if type == 2:
@@ -354,37 +355,45 @@ class WindowConfig(QWidget):
 
                             if self.eplan_IO.data_io_for_modbus[i][2][0] != None:
                                 self.widget_Ui_1_18[index - 1].combo_type_io_input_product.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][2][0])
-                        except Exception:
-                            print("Ошибка обработки входа!!!!!")
+                    except Exception:
+                        print("Ошибка обработки входа!!!!!")
 
+                    try:
+                        UO = self.eplan_IO.data_io[i].find("UO")
+                        U1 = self.eplan_IO.data_io[i].find("U0")
+                        if UO != -1 or U1 != -1:
 
-                    UO = self.eplan_IO.data_io[i].find("UO")
-                    U1 = self.eplan_IO.data_io[i].find("U0")
-                    if UO != -1 or U1 != -1:
-                        index = int(self.eplan_IO.data_io[i][2:])
-                        type = self.eplan_IO.data_io_for_modbus[i][1][0]
+                            index = int(self.eplan_IO.data_io[i][2:])
+                            type = self.eplan_IO.data_io_for_modbus[i][1][0]
 
-                        if type == 17:
-                            self.widget_Uo_1_8[index - 1].combo_var_out_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
-                            self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(2)
-                        elif type == 18:
-                            self.widget_Uo_1_8[index - 1].combo_var_out_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
-                            self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(0)
-                        else:
-                            self.widget_Uo_1_8[index - 1].combo_var_out_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
-                            self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(1)
+                            if type == 17:
+                                self.widget_Uo_1_8[index - 1].combo_var_out_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                                self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(2)
+                            elif type == 18:
+                                self.widget_Uo_1_8[index - 1].combo_var_out_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                                self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(0)
+                            else:
+                                self.widget_Uo_1_8[index - 1].combo_var_out_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                                self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(1)
+                    except Exception:
+                        print("Ошибка обработки входа!!!!!")
 
+                    try:
+                        Q = self.eplan_IO.data_io[i].find("Q")
+                        if Q != -1:
 
-                    Q = self.eplan_IO.data_io[i].find("Q")
-                    if Q != -1:
-                        index = int(self.eplan_IO.data_io[i][1:])
-                        self.widget_Q_1_5[index - 1].combo_var_out_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                            index = int(self.eplan_IO.data_io[i][1:])
+                            self.widget_Q_1_5[index - 1].combo_var_out_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                    except Exception:
+                        print("Ошибка обработки входа!!!!!")
 
-
-                    T = self.eplan_IO.data_io[i].find("T")
-                    if T != -1:
-                        index = int(self.eplan_IO.data_io[i][1:])
-                        self.widget_T_1_2[index - 1].combo_var_out_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                    try:
+                        T = self.eplan_IO.data_io[i].find("T")
+                        if T != -1:
+                            index = int(self.eplan_IO.data_io[i][1:])
+                            self.widget_T_1_2[index - 1].combo_var_out_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
+                    except Exception:
+                        print("Ошибка обработки входа!!!!!")
 
             if self.eplan_converter != None:
                 self.converter.in_num_edit.setText(str(self.eplan_converter.getCountInputConverter()))
