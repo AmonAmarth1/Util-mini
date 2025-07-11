@@ -121,3 +121,10 @@ class Gui_Recup(QWidget):
             self.recup_rpm_edit.hide()
             self.recup_name_conv_label.hide()
             self.recup_conv_type_combo.hide()
+
+    def clear(self):
+        self.recup_use_combo.setCurrentIndex(0)
+        self.recup_type_combo.setCurrentIndex(0)
+        self.recup_modbus_use_combo.setCurrentIndex(0)
+        self.recup_id_edit.setText(str(40))
+        self.recup_rpm_edit.setText(str(10))

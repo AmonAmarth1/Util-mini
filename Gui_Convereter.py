@@ -88,7 +88,7 @@ class Gui_Converter(QWidget):
 
         self.layout_out_num = QHBoxLayout()
         self.name_out_num = QLabel("Количество:")
-        self.out_num_edit = QLineEdit('1')
+        self.out_num_edit = QLineEdit('0')
         self.layout_out_num.addWidget(self.name_out_num)
         self.layout_out_num.addWidget(self.out_num_edit)
         self.layout_out.addLayout(self.layout_out_num)
@@ -129,3 +129,16 @@ class Gui_Converter(QWidget):
         self.setLayout(self.main_layout)
 
         pass
+
+    def clear(self):
+        self.in_num_edit.setText(str(1))
+        self.combo_in_modbus_use.setCurrentIndex(0)
+        self.combo_in_type.setCurrentIndex(0)
+        self.edit_in_id.setText(str(1))
+        self.combo_in_reserve.setCurrentIndex(0)
+
+        self.out_num_edit.setText(str(0))
+        self.combo_out_modbus_use.setCurrentIndex(0)
+        self.combo_out_type.setCurrentIndex(0)
+        self.edit_out_id.setText(str(0))
+        self.combo_out_reserve.setCurrentIndex(0)

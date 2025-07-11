@@ -22,7 +22,12 @@ class Literal:
     reg_bin_digit = 303
     pwm_out = 290
 
-    IO_LENGTH = 18
+    I_LENGTH = 18
+    O_LENGTH = 8
+    Q_LENGTH = 5
+    T_LENGTH = 2
+
+    SENS_LENGTH = 10
 
     NEW_BIN_NUM_1 = DEFAULT_BIN_OUTPUT_DIGIT | BIT_0
     NEW_BIN_NUM_2 = DEFAULT_BIN_OUTPUT_DIGIT | BIT_1

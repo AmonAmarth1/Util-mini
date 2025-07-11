@@ -80,7 +80,17 @@ class WindowConfig(QWidget):
         self.layout_sourse_data.addWidget(self.data_sourse)
         self.layout_sourse_data.addWidget(self.load_button)
 
+        self.layout_clear_data = QHBoxLayout()
+
+        self.qlabel_clear = QLabel("Очистить данные из окон: ")
+        self.clear_button = QPushButton('Очистить', self)
+        self.clear_button.clicked.connect(self.clear_function)
+
+        self.layout_clear_data.addWidget(self.qlabel_clear)
+        self.layout_clear_data.addWidget(self.clear_button)
+
         self.layout.addLayout(self.layout_sourse_data)
+        self.layout.addLayout(self.layout_clear_data)
 
         self.layout_In = QGridLayout()
         self.widget_Ui_1_18 = []
@@ -90,21 +100,21 @@ class WindowConfig(QWidget):
         self.widget_Q_1_5 = []
         self.widget_T_1_2 = []
 
-        for i in range(0, 18):
+        for i in range(0, Literal.I_LENGTH):
             self.widget_Ui_1_18.append(Gui_IO(f"Ui{i + 1}", {i}, self.config, "input"))
             self.layout_In.addWidget(self.widget_Ui_1_18[i], int(i / 6), int((i % 6)))
             self.widget_Ui_1_18[i].combo_var_in_digit.currentIndexChanged.connect(self.digitChange)
             self.widget_Ui_1_18[i].combo_var_in_analog.currentIndexChanged.connect(self.analogChange)
 
-        for i in range(0, 8):
+        for i in range(0, Literal.O_LENGTH):
             self.widget_Uo_1_8.append(Gui_IO(f"Uo{i + 1}", {i}, self.config, "output"))
             self.layout_Out.addWidget(self.widget_Uo_1_8[i], 0, i)
 
-        for i in range(0, 5):
+        for i in range(0, Literal.Q_LENGTH):
             self.widget_Q_1_5.append(Gui_IO(f"Q{i + 1}", {i}, self.config, "output"))
             self.layout_Out.addWidget(self.widget_Q_1_5[i], 1, i)
 
-        for i in range(0, 2):
+        for i in range(0, Literal.T_LENGTH):
             self.widget_T_1_2.append(Gui_IO(f"T{i + 1}", {i}, self.config, "output"))
             self.layout_Out.addWidget(self.widget_T_1_2[i], 2, i)
 
@@ -133,7 +143,7 @@ class WindowConfig(QWidget):
         self.layout_sensors = QGridLayout()
         self.widget_sensors_10 = []
 
-        for i in range(0, 10):
+        for i in range(0, Literal.SENS_LENGTH):
             self.widget_sensors_10.append(Gui_sensors(self.config, i + 1))
             self.layout_sensors.addWidget(self.widget_sensors_10[i], int(i / 5), int((i % 5)))
             self.widget_sensors_10[i].var_combo.currentIndexChanged.connect(self.sensorChange)
@@ -160,9 +170,13 @@ class WindowConfig(QWidget):
         prev_i_save = 0
         use_set = False
         use_reset = False
-        for j in range(0, Literal.IO_LENGTH):
+        for j in range(0, Literal.I_LENGTH):
             if i == self.widget_Ui_1_18[j].combo_var_in_digit.currentIndex() and i != 0:
                 use_set = True
+                prev_i = self.widget_Ui_1_18[j].prev_digit
+                if prev_i != 0:
+                    use_reset = True
+                    prev_i_save = prev_i
                 self.widget_Ui_1_18[j].prev_digit = i
                 num_input_change = j
             elif i == self.widget_Ui_1_18[j].combo_var_in_digit.currentIndex() and i == 0:
@@ -177,12 +191,12 @@ class WindowConfig(QWidget):
             self.resetBlockDigit(prev_i_save)
 
     def setBlockDigit(self, i, num_input_change):
-        for j in range(0, Literal.IO_LENGTH):
+        for j in range(0, Literal.I_LENGTH):
             if(j != num_input_change):
                 self.widget_Ui_1_18[j].combo_var_in_digit.model().item(i).setEnabled(False)
 
     def resetBlockDigit(self, prev_i):
-        for j in range(0, Literal.IO_LENGTH):
+        for j in range(0, Literal.I_LENGTH):
             self.widget_Ui_1_18[j].combo_var_in_digit.model().item(prev_i).setEnabled(True)
 
     def analogChange(self, i):
@@ -191,10 +205,14 @@ class WindowConfig(QWidget):
         prev_i_save = 0
         use_set = False
         use_reset = False
-        for j in range(0, Literal.IO_LENGTH):
+        for j in range(0, Literal.I_LENGTH):
             if i == self.widget_Ui_1_18[j].combo_var_in_analog.currentIndex() and i != 0:
                 num_input_change = j
                 use_set = True
+                prev_i = self.widget_Ui_1_18[j].prev_analog
+                if prev_i != 0:
+                    use_reset = True
+                    prev_i_save = prev_i
                 self.widget_Ui_1_18[j].prev_analog = i
             elif i == self.widget_Ui_1_18[j].combo_var_in_analog.currentIndex() and i == 0:
                 prev_i = self.widget_Ui_1_18[j].prev_analog
@@ -208,14 +226,14 @@ class WindowConfig(QWidget):
             self.resetBlockAnalog(prev_i_save)
 
     def setBlockAnalog(self, i, num_input_change):
-        for j in range(0, Literal.IO_LENGTH):
+        for j in range(0, Literal.I_LENGTH):
             if(j != num_input_change):
                 self.widget_Ui_1_18[j].combo_var_in_analog.model().item(i).setEnabled(False)
         for j in range(0, len(self.widget_sensors_10)):
                 self.widget_sensors_10[j].var_combo.model().item(i).setEnabled(False)
 
     def resetBlockAnalog(self, prev_i):
-        for j in range(0, Literal.IO_LENGTH):
+        for j in range(0, Literal.I_LENGTH):
             self.widget_Ui_1_18[j].combo_var_in_analog.model().item(prev_i).setEnabled(True)
         for j in range(0, len(self.widget_sensors_10)):
             self.widget_sensors_10[j].var_combo.model().item(prev_i).setEnabled(True)
@@ -230,6 +248,10 @@ class WindowConfig(QWidget):
             if i == self.widget_sensors_10[j].var_combo.currentIndex() and i != 0:
                 num_input_change = j
                 use_set = True
+                prev_i = self.widget_sensors_10[j].prev_i
+                if prev_i != 0:
+                    use_reset = True
+                    prev_i_save = prev_i
                 self.widget_sensors_10[j].prev_i = i
             elif i == self.widget_sensors_10[j].var_combo.currentIndex() and i == 0:
                 prev_i = self.widget_sensors_10[j].prev_i
@@ -246,14 +268,33 @@ class WindowConfig(QWidget):
         for j in range(0, len(self.widget_sensors_10)):
             if(j != num_input_change):
                 self.widget_sensors_10[j].var_combo.model().item(i).setEnabled(False)
-        for j in range(0, Literal.IO_LENGTH):
+        for j in range(0, Literal.I_LENGTH):
                 self.widget_Ui_1_18[j].combo_var_in_analog.model().item(i).setEnabled(False)
 
     def resetBlockSens(self, prev_i):
-        for j in range(0, Literal.IO_LENGTH):
+        for j in range(0, Literal.I_LENGTH):
             self.widget_Ui_1_18[j].combo_var_in_analog.model().item(prev_i).setEnabled(True)
         for j in range(0, len(self.widget_sensors_10)):
             self.widget_sensors_10[j].var_combo.model().item(prev_i).setEnabled(True)
+
+    def clear_function(self):
+        for i in range(0, Literal.I_LENGTH):
+            self.widget_Ui_1_18[i].clear()
+        for i in range(0, Literal.O_LENGTH):
+            self.widget_Uo_1_8[i].clear()
+        for i in range(0, Literal.Q_LENGTH):
+            self.widget_Q_1_5[i].clear()
+        for i in range(0, Literal.T_LENGTH):
+            self.widget_T_1_2[i].clear()
+        for i in range(0, Literal.SENS_LENGTH):
+            self.widget_sensors_10[i].clear()
+
+        self.converter.clear()
+        self.dx.clear()
+        self.heat.clear()
+        self.hum.clear()
+        self.mix.clear()
+        self.recup.clear()
 
     def initIO(self, layout):
         pass
@@ -547,14 +588,14 @@ class WindowConfig(QWidget):
 
         self.data_io_from_gui.setAnalogUseBit()
 
-        for i in range(0, 5):
+        for i in range(0, Literal.Q_LENGTH):
             self.data_io_from_gui.Q_var.append(self.widget_Q_1_5[i].combo_var_out_digit.currentIndex())
-        for i in range(0, 2):
+        for i in range(0, Literal.T_LENGTH):
             self.data_io_from_gui.T_var.append(self.widget_T_1_2[i].combo_var_out_digit.currentIndex())
         print(self.data_io_from_gui.Q_var)
         print(self.data_io_from_gui.T_var)
 
-        for i in range(0, 8):
+        for i in range(0, Literal.O_LENGTH):
             type = self.widget_Uo_1_8[i].combo_io_output_type.currentIndex()
             type2 = 0
             if type == 2:

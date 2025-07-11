@@ -32,3 +32,6 @@ class Gui_mix_camera(QWidget):
         self.main_layout.addLayout(self.layout_mix)
 
         self.setLayout(self.main_layout)
+
+    def clear(self):
+        self.mix_use_combo.setCurrentIndex(0)

@@ -52,3 +52,8 @@ class Gui_dx(QWidget):
         self.main_layout.addLayout(self.layout_dx)
 
         self.setLayout(self.main_layout)
+
+    def clear(self):
+        self.dx_use_combo.setCurrentIndex(0)
+        self.type_dx_combo.setCurrentIndex(0)
+        self.dx_heat_combo.setCurrentIndex(0)

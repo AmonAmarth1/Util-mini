@@ -183,3 +183,22 @@ class Gui_IO(QWidget):
                 self.combo_var_in_analog.setCurrentIndex(var)
         else:
             self.combo_io_output_type.setCurrentIndex(type)
+
+    def clear(self):
+
+        self.combo_var_in_digit.setCurrentIndex(0)
+        self.combo_var_in_analog.setCurrentIndex(0)
+        self.combo_var_out_digit.setCurrentIndex(0)
+        self.combo_var_out_analog.setCurrentIndex(0)
+        self.combo_io_input_type.setCurrentIndex(0)
+
+        self.combo_io_output_type.setCurrentIndex(0)
+
+        if (self.output_Uo != -1):
+            self.line_edit_period.setText(str(0))
+
+        self.combo_type_io_input_product.setCurrentIndex(0)
+        name = self.name_io.text()
+        if (name == "Ui1" or name == "Ui2" or name == "Ui3" or name == "Ui4" or name == "Ui5" or name == "Ui6"):
+            self.line_edit_min.setText(str(0))
+            self.line_edit_max.setText(str(0))

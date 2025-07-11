@@ -85,3 +85,11 @@ class Gui_Heat(QWidget):
         self.setLayout(self.main_layout)
 
         pass
+
+    def clear(self):
+        self.heat1_type_combo.setCurrentIndex(0)
+        self.heat1_reserve_pump_combo.setCurrentIndex(0)
+        self.heat2_use_combo.setCurrentIndex(0)
+        self.heat2_type_combo.setCurrentIndex(0)
+        self.heat2_reserve_pump_combo.setCurrentIndex(0)
+

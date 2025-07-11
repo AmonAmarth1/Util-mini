@@ -56,3 +56,8 @@ class Gui_sensors(QWidget):
         self.setLayout(self.main_layout)
 
         pass
+
+    def clear(self):
+        self.id_edit.setText(str(0))
+        self.type_combo.setCurrentIndex(0)
+        self.var_combo.setCurrentIndex(0)

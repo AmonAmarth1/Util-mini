@@ -47,3 +47,8 @@ class Gui_humidifier(QWidget):
         self.main_layout.addLayout(self.layout_hum)
 
         self.setLayout(self.main_layout)
+
+    def clear(self):
+        self.hum_use_combo.setCurrentIndex(0)
+        self.drainage_use_combo.setCurrentIndex(0)
+
