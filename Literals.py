@@ -23,6 +23,7 @@ class Literal:
     pwm_out = 290
 
     I_LENGTH = 18
+    I_UNIVERSAL_LENGTH = 6
     O_LENGTH = 8
     Q_LENGTH = 5
     T_LENGTH = 2
@@ -43,6 +44,8 @@ class Literal:
     types_io_input = {0: "Voltage", 1: "Current", 2: "Digital", 3: "Resistance"}
     types_io_output = {0: "0-10V", 1: "PWM", 2: "Digital"}
     types_io_output_2 = {18: "0-10V", 19: "PWM", 17: "Digital"}
+    OUT_0_10V = 18
+    OUT_DIGIT = 17
     types_product_num = {"--": 0, "NC": 1, "NO": 2, "4-20мА": 3, "0-1": 4, "0-5": 5, "0-10": 6, "3950": 7, "3435": 8, "NTC20k": 9, "pt1000": 10}
 
 

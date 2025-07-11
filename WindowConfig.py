@@ -39,7 +39,7 @@ from Gui_dx import Gui_dx
 from Gui_Humidifier import Gui_humidifier
 from Gui_mix_camera import Gui_mix_camera
 from Gui_sensors import Gui_sensors
-
+#   auto-py-to-exe - запуск приложения для создания exe файла
 from PyQt5.QtCore import Qt, QSize
 class WindowConfig(QWidget):
     def __init__(self, config, eplan_IO=None, data_from_plc=None):
@@ -378,7 +378,7 @@ class WindowConfig(QWidget):
                                 self.widget_Ui_1_18[index - 1].combo_var_in_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
                                 self.widget_Ui_1_18[index - 1].prev_digit = self.eplan_IO.data_io_for_modbus[i][0][0]
                                 self.save_digit_vat_i[index - 1] = self.eplan_IO.data_io_for_modbus[i][0][0]
-                                if index < 7:
+                                if index < Literal.I_UNIVERSAL_LENGTH + 1:
                                     self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][1][0])
                                 else:
                                     self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(
@@ -388,7 +388,7 @@ class WindowConfig(QWidget):
                                 self.widget_Ui_1_18[index - 1].combo_var_in_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
                                 self.widget_Ui_1_18[index - 1].prev_analog = self.eplan_IO.data_io_for_modbus[i][0][0]
                                 self.save_analog_var_i[index - 1] = self.eplan_IO.data_io_for_modbus[i][0][0]
-                                if index < 7:
+                                if index < Literal.I_UNIVERSAL_LENGTH + 1:
                                     self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][1][0])
                                 else:
                                     self.widget_Ui_1_18[index - 1].combo_io_input_type.setCurrentIndex(
@@ -407,10 +407,10 @@ class WindowConfig(QWidget):
                             index = int(self.eplan_IO.data_io[i][2:])
                             type = self.eplan_IO.data_io_for_modbus[i][1][0]
 
-                            if type == 17:
+                            if type == Literal.OUT_DIGIT:
                                 self.widget_Uo_1_8[index - 1].combo_var_out_digit.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
                                 self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(2)
-                            elif type == 18:
+                            elif type == Literal.OUT_0_10V:
                                 self.widget_Uo_1_8[index - 1].combo_var_out_analog.setCurrentIndex(self.eplan_IO.data_io_for_modbus[i][0][0])
                                 self.widget_Uo_1_8[index - 1].combo_io_output_type.setCurrentIndex(0)
                             else:
@@ -491,7 +491,7 @@ class WindowConfig(QWidget):
                         self.widget_Ui_1_18[i].combo_var_in_analog.setCurrentIndex(self.data_from_plc.Ui_value[i][0])
                         self.widget_Ui_1_18[i].prev_analog = self.data_from_plc.Ui_value[i][0]
                         self.save_analog_var_i[i] = self.data_from_plc.Ui_value[i][0]
-                    if i < 6:
+                    if i < Literal.I_UNIVERSAL_LENGTH:
                         self.widget_Ui_1_18[i].combo_io_input_type.setCurrentIndex(type)
                     else:
                         self.widget_Ui_1_18[i].combo_io_input_type.setCurrentIndex(type - 2)
@@ -505,14 +505,14 @@ class WindowConfig(QWidget):
                     type = self.data_from_plc.Uo_value[i][1]
                     pwm = self.data_from_plc.Uo_value[i][2]
 
-                    if type == 17:
+                    if type == Literal.OUT_DIGIT:
                         self.widget_Uo_1_8[i].combo_var_out_digit.setCurrentIndex(self.data_from_plc.Uo_value[i][0])
                         self.widget_Uo_1_8[i].combo_io_output_type.setCurrentIndex(2)
-                    elif type == 18 and pwm == 0:
+                    elif type == Literal.OUT_0_10V and pwm == 0:
                         self.widget_Uo_1_8[i].combo_var_out_analog.setCurrentIndex(self.data_from_plc.Uo_value[i][0])
                         self.widget_Uo_1_8[i].combo_io_output_type.setCurrentIndex(0)
                         self.widget_Uo_1_8[i].line_edit_period.setText(str(self.data_from_plc.Uo_value[i][2]))
-                    elif type == 18 and pwm != 0:
+                    elif type == Literal.OUT_0_10V and pwm != 0:
                         self.widget_Uo_1_8[i].combo_var_out_analog.setCurrentIndex(self.data_from_plc.Uo_value[i][0])
                         self.widget_Uo_1_8[i].combo_io_output_type.setCurrentIndex(1)
                         self.widget_Uo_1_8[i].line_edit_period.setText(str(self.data_from_plc.Uo_value[i][2]))
@@ -564,8 +564,8 @@ class WindowConfig(QWidget):
 
     def save_function(self):
         self.data_io_from_gui.clear()
-        for i in range(0, 18):
-            if i < 6:
+        for i in range(0, Literal.I_LENGTH):
+            if i < Literal.I_UNIVERSAL_LENGTH:
                 type = self.widget_Ui_1_18[i].combo_io_input_type.currentIndex()
             else:
                 type = self.widget_Ui_1_18[i].combo_io_input_type.currentIndex() + 2
@@ -574,7 +574,7 @@ class WindowConfig(QWidget):
             else:
                 self.data_io_from_gui.var.append(self.widget_Ui_1_18[i].combo_var_in_digit.currentIndex())
             self.data_io_from_gui.method.append(self.widget_Ui_1_18[i].combo_type_io_input_product.currentIndex())
-            if (i < 6):
+            if (i < Literal.I_UNIVERSAL_LENGTH):
                 self.data_io_from_gui.type.append(2 if self.widget_Ui_1_18[i].combo_io_input_type.currentIndex() == -1 else self.widget_Ui_1_18[i].combo_io_input_type.currentIndex())
                 try:
                     self.data_io_from_gui.min.append(0 if self.widget_Ui_1_18[i].line_edit_min.text() == '' else int(self.widget_Ui_1_18[i].line_edit_min.text()))
@@ -599,13 +599,13 @@ class WindowConfig(QWidget):
             type = self.widget_Uo_1_8[i].combo_io_output_type.currentIndex()
             type2 = 0
             if type == 2:
-                type2 = 17
+                type2 = Literal.OUT_DIGIT
                 self.data_io_from_gui.U_var.append(self.widget_Uo_1_8[i].combo_var_out_digit.currentIndex())
             elif type == 1:
-                type2 = 18
+                type2 = Literal.OUT_0_10V
                 self.data_io_from_gui.U_var.append(self.widget_Uo_1_8[i].combo_var_out_analog.currentIndex())
             else:
-                type2 = 18
+                type2 = Literal.OUT_0_10V
                 self.data_io_from_gui.U_var.append(self.widget_Uo_1_8[i].combo_var_out_analog.currentIndex())
             self.data_io_from_gui.U_type.append(type2)
             self.data_io_from_gui.U_period.append(0 if self.widget_Uo_1_8[i].line_edit_period.text() == '' else int(self.widget_Uo_1_8[i].line_edit_period.text()))

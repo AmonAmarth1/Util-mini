@@ -113,7 +113,7 @@ class MyApp(QWidget):
         self.unload_button.clicked.connect(self.unload_function_file)
         layout.addWidget(self.unload_button)
 
-        self.qlabel_text1 = QLabel("Выбро источника для выгрузки данных в плк: ")
+        self.qlabel_text1 = QLabel("Выбро источника для загрузки данных в плк: ")
 
         self.sourse_data1 = QComboBox(self)
         self.sourse_data1.addItems(['Eplan', 'Окно конфигурации'])
