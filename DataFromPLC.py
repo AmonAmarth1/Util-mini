@@ -266,3 +266,4 @@ class DataFromPLC:
         print(self.id_list)
         print(self.sensors_type_list)
         print(self.sensors_var_list)
+        self.client.closePort()

@@ -76,7 +76,7 @@ class Literal:
 
     type_recup = {"plastina": "3Y1", "rotor": "9U1", "glikol": "Y5"}
     type_recup_num = {0: "None", 1: "plastina", 2: "rotor", 3: "glikol"}
-    reg_recup = {"use_recup": 19, "type_recup": 1817, "activate_modbus": 142, "id": 678, "nominal_rpm": 679, "type_conv": 680}
+    reg_recup = {"use_recup": 19, "type_recup": 1817, "activate_modbus": 142, "id": 678, "nominal_rpm": 679, "type_conv": 501}
     type_reg_recup = {"use_recup": 5, "type_recup": 6, "activate_modbus": 5, "id": 6, "nominal_rpm": 6, "type_conv": 6}
 
     type_dx = {"freon": "E1", "liquid": "Y3"}

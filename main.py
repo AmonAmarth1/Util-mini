@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton,
     QFileDialog, QComboBox, QLabel, QTextEdit, QHBoxLayout
 )
-
+#   auto-py-to-exe - запуск приложения для создания exe файла
 import Modbus_rtu
 from Modbus_rtu import create_modbus_rtu_packet
 import Test_deepseek
@@ -279,9 +279,11 @@ class MyApp(QWidget):
         except Exception as e:
             self.output_text.append(f"Произошло исключение: {e}")
             print(f"Произошло исключение: {e}")
+
         else:
             self.data_from_plc.print()
             self.output_text.append("Данные из плк загружены.")
+
         pass
 
     def unload_function_file(self):
